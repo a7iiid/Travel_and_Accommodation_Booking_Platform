@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Domain.Entities
 {
-    internal class Room
+    public class Room
     {
+        public Guid Id { get; set; }
+        public int RoomNumber { get; set; }
+        public float Rating { get; set; }
     }
 }
