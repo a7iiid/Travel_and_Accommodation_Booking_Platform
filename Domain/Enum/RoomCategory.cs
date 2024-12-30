@@ -2,7 +2,7 @@
 
 namespace Domain.Enum
 {
-    public enum RoomType
+    public enum RoomCategory
     {
         Standard,
         Deluxe,
