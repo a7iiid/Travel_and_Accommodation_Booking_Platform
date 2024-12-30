@@ -7,7 +7,7 @@ namespace Domain.Entities
         public string? Name { get; set; }
         public string? Country { get; set; }
         public string? CountryCode { get; set; }
-        public int PostOfficeCode { get; set; }
+        public string PostOfficeCode { get; set; }
         public IList<Hotel> Hotels { get; set; }
 
     }
