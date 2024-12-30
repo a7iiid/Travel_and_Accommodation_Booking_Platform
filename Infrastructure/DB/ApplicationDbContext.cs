@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 
 
-namespace Infrastructure
+namespace Infrastructure.DB
 {
     public class ApplicationDbContext : DbContext
     {
@@ -21,7 +21,7 @@ namespace Infrastructure
         public DbSet<Payment> Payments { get; set; }
         public DbSet<RoomAmenity> RoomAmenities { get; set; }
 
-       
+
 
     }
 }
