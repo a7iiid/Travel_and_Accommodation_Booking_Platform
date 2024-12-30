@@ -10,6 +10,8 @@ namespace Domain.Interfaces
         Task<bool>Delete(Guid id);
         Task<bool>Exists(Guid id);
         Task<T>Update(T entity);
-       
+        public Task SaveChangesAsync();
+
+
     }
 }
