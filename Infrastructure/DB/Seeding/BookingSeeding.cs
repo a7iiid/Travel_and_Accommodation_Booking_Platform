@@ -13,7 +13,7 @@ namespace Infrastructure.DB.Seeding
             {
                 Id = new Guid("7d3155a2-95f8-4d9b-bc24-662ae053f1c9"),
                 RoomId = new Guid("a98b8a9d-4c5a-4a90-a2d2-5f1441b93db6"),
-                UserId = new Guid("c6c45f7c-2dfe-4c1e-9a9b-8b173c71b32c"),
+                UserId = new Guid("aaf21a7d-8fc3-4c9f-8a8e-1eeec8dcd462"),
                 Price = 100,
                 CheckInDate = DateTime.Parse("2025-01-15"),
                 CheckOutDate = DateTime.Parse("2025-01-20"),
@@ -23,7 +23,7 @@ namespace Infrastructure.DB.Seeding
             {
                 Id = new Guid("efeb3d13-3dab-46c9-aa9a-9f22dd58e06e"),
                 RoomId = new Guid("4e1cb3d9-bc3b-4997-a3d5-0c56cf17fe7a"),
-                UserId = new Guid("aaf21a7d-8fc3-4c9f-8a8e-1eeec8dcd462"),
+                UserId = new Guid("c6c45f7c-2dfe-4c1e-9a9b-8b173c71b32c"),
                 Price = 150,
                 CheckInDate = DateTime.Parse("2025-02-05"),
                 CheckOutDate = DateTime.Parse("2025-02-10"),

@@ -13,5 +13,7 @@ namespace Domain.Entities
         public double Price { get; set; }
         public Review? Review { get; set; }
         public Payment? Payment { get; set; }
+        public User User { get; set; }
+
     }
 }
