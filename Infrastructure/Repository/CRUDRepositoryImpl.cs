@@ -23,11 +23,11 @@ namespace Infrastructure.Repository
 
 
 
-        public async Task<IEnumerable<T>> GetAll()
+        public virtual async Task<IReadOnlyList<T>> GetAllAsync()
         {
             try
             {
-                var result = await _context.Set<T>().ToListAsync();
+                var result = await _context.Set<T>().AsNoTracking().ToListAsync();
                 if (result == null || !result.Any())
                 {
                     throw new NotFoundException("No records found.");
@@ -47,7 +47,7 @@ namespace Infrastructure.Repository
         }
 
 
-        public async Task Add(T entity)
+        public virtual async Task InsertAsync(T entity)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace Infrastructure.Repository
         }
 
 
-        public async Task<T> GetById(Guid id)
+        public virtual async Task<T> GetByIdAsync(Guid id)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<bool> Delete(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
             try
             {
@@ -107,7 +107,7 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<bool> Exists(Guid id)
+        public async Task<bool> IsExistsAsync(Guid id)
         {
             try
             {
@@ -120,7 +120,7 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task Update(T entity)
+        public virtual async Task UpdateAsync(T entity)
         {
             try
             {
