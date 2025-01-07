@@ -17,6 +17,7 @@ namespace Infrastructure.Extensions
             modelBuilder.Entity<Hotel>().HasData(HotelSeeding.SeedData());
             modelBuilder.Entity<RoomType>().HasData(RoomTypeSeeding.SeedData());
             modelBuilder.Entity<Room>().HasData(RoomSeeding.SeedData());
+            modelBuilder.Entity<User>().HasData(UserSeeding.SeedData());
             modelBuilder.Entity<Booking>().HasData(BookingSeeding.SeedData());
             modelBuilder.Entity<Payment>().HasData(PaymentSeeding.SeedData());
             modelBuilder.Entity<Review>().HasData(ReviewSeeding.SeedData());

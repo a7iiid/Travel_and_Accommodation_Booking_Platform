@@ -12,7 +12,7 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
             .HasOne<RoomType>()
             .WithMany()
             .HasForeignKey(room => room.RoomTypeId)
-            .IsRequired()
+            
             .OnDelete(DeleteBehavior.NoAction);
 
         builder
@@ -20,9 +20,7 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
             .IsRequired()
             .HasDefaultValue(0.0F);
 
-        builder
-            .Property(room => room.Capacity)
-            .IsRequired();
+        
 
       
 
