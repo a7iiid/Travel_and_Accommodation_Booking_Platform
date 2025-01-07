@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces
 {
-    public interface ICRUDRepository<T>
+    public interface ICRUDRepository<T> where T : class
     {
         Task Add(T  entity);
         Task<T> GetById(Guid id);
