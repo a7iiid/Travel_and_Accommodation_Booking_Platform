@@ -12,6 +12,5 @@ namespace Domain.Model
         public Guid RoomId { get; set; }
         public string RoomType { get; set; }
         public float RoomPricePerNight { get; set; }
-        public float Discount { get; set; }
     }
 }
