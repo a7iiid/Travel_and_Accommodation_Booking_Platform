@@ -10,7 +10,7 @@ namespace Infrastructure.Repository
 {
 
 
-    public class Repository<T> : ICRUDRepository<T> where T : class//this for the compiler know t is class for using with context
+    public class Repository<T> : IRepository<T> where T : class//this for the compiler know t is class for using with context
     {
         protected readonly ApplicationDbContext _context;
         protected readonly ILogger<Repository<T>> log;

@@ -2,7 +2,7 @@
 
 namespace Domain.Interfaces
 {
-    public interface ICRUDRepository<T> where T : class
+    public interface IRepository<T> where T : class
     {
         Task InsertAsync(T  entity);
         Task<T> GetByIdAsync(Guid id);
