@@ -9,6 +9,8 @@ using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Domain.Entities;
+using Infrastructure.Auth.password;
+using Microsoft.AspNetCore.Identity;
 
 namespace Presentation.Controllers
 {
@@ -20,6 +22,7 @@ namespace Presentation.Controllers
         private readonly ITokenGenerator _tokenGenerator;
         ApplicationDbContext _context;  
             ILogger<UserRepository> _logger;
+        private readonly IPasswordHasher _passwordHasher;
          private readonly IMapper _mapper;
 
         public AuthenticationController(
@@ -27,7 +30,8 @@ namespace Presentation.Controllers
             ITokenGenerator tokenGenerator,
             ApplicationDbContext context,  
             ILogger<UserRepository> logger,
-        IMapper mapper
+        IMapper mapper,
+        IPasswordHasher password
         )
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -35,7 +39,8 @@ namespace Presentation.Controllers
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
              _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        }
+            _passwordHasher=password ?? throw new ArgumentNullException(nameof(password));
+                }
 
         /// <summary>
         /// Endpoint for user sign-in. Validates user credentials and
@@ -102,7 +107,13 @@ namespace Presentation.Controllers
                     var errors = validationResult.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
                     return BadRequest(new { Errors = errors });
                 }
+                string salt = _passwordHasher.GenerateSalt();
+                string hashedPassword = _passwordHasher.HashPassword(user.Password, salt);
+
                 User userEntity = _mapper.Map<User>(user);
+                userEntity.PasswordHash = hashedPassword;
+                userEntity.Salt = salt;
+
 
                 UserRepository userRepository = new UserRepository(_context, _logger);
                 await userRepository.InsertAsync(userEntity);
