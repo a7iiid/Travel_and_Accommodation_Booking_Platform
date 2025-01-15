@@ -1,8 +1,11 @@
 using System.Reflection;
 using System.Text;
 using Application.profile;
+using Application.Services;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Auth;
+using Infrastructure.Auth.password;
 using Infrastructure.DB;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -90,12 +93,13 @@ services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.RequireClaim("Role", "Admin");
     }));
-services.AddScoped<Infrastructure.Auth.password.IPasswordHasher, Infrastructure.Auth.password.PasswordHasher>();
 
-services.AddScoped<Infrastructure.Auth.IAuthUser, Infrastructure.Auth.AuthUser>();
+services.AddScoped<IPasswordHasher, PasswordHasher>();
+services.AddScoped<IRepository<User>, UserRepository>();
+services.AddScoped<IAuthUser, AuthUser>();
+services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
+services.AddScoped<UserService>();
 
-services.AddScoped<Infrastructure.Auth.ITokenGenerator, Infrastructure.Auth.JwtTokenGenerator>();
-services.AddScoped<Domain.Interfaces.IRepository<User>, Infrastructure.Repository.Repository<User>>();
 
 builder.Services.AddAutoMapper(typeof(UserProfile));
 

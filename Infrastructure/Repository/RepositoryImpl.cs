@@ -47,7 +47,7 @@ namespace Infrastructure.Repository
         }
 
 
-        public virtual async Task InsertAsync(T entity)
+        public virtual async Task AddUserAsync(T entity)
         {
             try
             {

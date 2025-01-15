@@ -1,4 +1,5 @@
-﻿using Domain.Model;
+﻿using Domain.Interfaces;
+using Domain.Model;
 using Infrastructure.Auth.model;
 using Infrastructure.Auth.password;
 using Microsoft.Extensions.Configuration;

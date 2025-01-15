@@ -31,12 +31,12 @@ namespace Infrastructure.Repository
                         .Equals(email))
                     .SingleAsync()).Id;
             }
-            public override async Task InsertAsync(User user)
+            public override async Task AddUserAsync(User user)
             {
                 try
                 {
                     await _context.Users.AddAsync(user);
-                    await base.SaveChangesAsync();
+                    await SaveChangesAsync();
                 }
                 catch (DbUpdateException e)
                 {

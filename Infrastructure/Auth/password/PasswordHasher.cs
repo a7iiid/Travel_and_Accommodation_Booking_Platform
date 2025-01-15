@@ -1,6 +1,8 @@
 ﻿
 using System.Security.Cryptography;
 using System.Text;
+using Domain.Interfaces;
+
 
 
 namespace Infrastructure.Auth.password

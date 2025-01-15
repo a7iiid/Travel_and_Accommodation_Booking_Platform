@@ -1,4 +1,4 @@
-﻿namespace Infrastructure.Auth.password
+﻿namespace Domain.Interfaces
 {
     public interface IPasswordHasher
     {
