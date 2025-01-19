@@ -1,7 +1,6 @@
 ﻿using Domain.Interfaces;
 using Domain.Model;
 using Infrastructure.Auth.model;
-using Infrastructure.Auth.password;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -27,6 +26,7 @@ namespace Infrastructure.Auth
         public async Task<string> GenerateToken(string email, string password,JWTConfig jWTConfig)
         {
             var user = await ValidateUserCredentials(email, password);
+
             var key = new SymmetricSecurityKey
                         (Encoding.UTF8.GetBytes(jWTConfig.SecretKey));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
