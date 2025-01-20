@@ -31,7 +31,7 @@ namespace Infrastructure.Repository
                         .Equals(email))
                     .SingleAsync()).Id;
             }
-            public override async Task AddUserAsync(User user)
+            public override async Task AddAsync(User user)
             {
                 try
                 {

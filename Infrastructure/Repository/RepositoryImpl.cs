@@ -47,7 +47,7 @@ namespace Infrastructure.Repository
         }
 
 
-        public virtual async Task AddUserAsync(T entity)
+        public virtual async Task AddAsync(T entity)
         {
             try
             {
@@ -120,14 +120,19 @@ namespace Infrastructure.Repository
             }
         }
 
-        public virtual async Task UpdateAsync(T entity)
+        public virtual async Task UpdateAsync(T entity, Guid id)
         {
             try
             {
                 if (entity == null)
                     throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
 
-                _context.Set<T>().Update(entity);
+                var existingEntity = await _context.Set<T>().FindAsync(id);
+                if (existingEntity == null)
+                    throw new KeyNotFoundException($"Entity of type {typeof(T).Name} with ID {id} was not found.");
+
+                _context.Entry(existingEntity).CurrentValues.SetValues(entity);
+
                 await SaveChangesAsync();
             }
             catch (Exception ex)
@@ -137,11 +142,15 @@ namespace Infrastructure.Repository
             }
         }
 
+
+
         public async Task SaveChangesAsync()
         {
             try
             {
                 await _context.SaveChangesAsync();
+                log.LogInformation("saving changes");
+
             }
             catch (Exception ex)
             {

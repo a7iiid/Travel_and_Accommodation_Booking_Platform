@@ -52,14 +52,14 @@ namespace Infrastructure.Repository
 
        
 
-        public override async Task<Booking?> AddUserAsync(Booking booking)
+        public override async Task<Booking?> AddAsync(Booking booking)
         {
             if (!await CanBookRoom(
                     booking.RoomId,
                     booking.CheckInDate,
                     booking.CheckOutDate)) return null;
 
-            await base.AddUserAsync(booking);
+            await base.AddAsync(booking);
             return booking;
         }
 

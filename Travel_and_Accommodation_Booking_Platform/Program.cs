@@ -88,10 +88,10 @@ builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
 services.AddAuthorization(options =>
-    options.AddPolicy("MustBeAdmin", policy =>
+    options.AddPolicy("Admin", policy =>
     {
         policy.RequireAuthenticatedUser();
-        policy.RequireClaim("Role", "Admin");
+        policy.RequireClaim("isAdmin", "True");
     }));
 
 services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -102,8 +102,7 @@ services.AddScoped<UserService>();
 services.AddScoped<IRepository<City>, CityRepository>();
 services.AddScoped<CityServices>();
 
-
-
+builder.Services.AddAutoMapper(typeof(CityProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
 
 

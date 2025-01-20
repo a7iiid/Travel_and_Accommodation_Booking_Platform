@@ -25,7 +25,7 @@ namespace Application.Services
             userEntity.Salt = _passwordHasher.GenerateSalt();
             userEntity.PasswordHash = _passwordHasher.HashPassword(userDto.Password, userEntity.Salt);
 
-            await _userRepository.AddUserAsync(userEntity);
+            await _userRepository.AddAsync(userEntity);
         }
     }
 }
