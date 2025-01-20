@@ -1,4 +1,6 @@
-﻿namespace Application.DTOs.CityDTOs
+﻿using Application.DTOs.HotelDTOs;
+
+namespace Application.DTOs.CityDTOs
 {
     public record CityDTO
     {
