@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 using Presentation.model;
 
-namespace Presentation.Validetors
+namespace Presentation.Validetors.AuthentcationValdetors
 {
-    public class AuthenticationRequestBodyValidator: AbstractValidator<AuthenticationRequestBody>
+    public class AuthenticationRequestBodyValidator : AbstractValidator<AuthenticationRequestBody>
     {
         public AuthenticationRequestBodyValidator()
         {

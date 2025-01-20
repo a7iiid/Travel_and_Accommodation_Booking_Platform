@@ -1,6 +1,7 @@
-﻿using FluentValidation;
+﻿using Application.DTOs;
+using FluentValidation;
 
-namespace Application.DTOs
+namespace Presentation.Validetors.AuthentcationValdetors
 {
     public class UserRegisterDTOValidator : AbstractValidator<UserRegisterDTO>
     {
