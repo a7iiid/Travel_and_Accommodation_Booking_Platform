@@ -1,17 +1,10 @@
 ﻿using Infrastructure.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Model;
-using Presentation.Validetors;
 using Presentation.model;
 using Application.DTOs;
-using Infrastructure.Repository;
-using Infrastructure.DB;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper;
-using Domain.Entities;
-
-using Domain.Interfaces;
 using Application.Services;
+using Presentation.Validetors.AuthentcationValdetors;
 
 namespace Presentation.Controllers
 {

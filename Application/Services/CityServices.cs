@@ -51,14 +51,19 @@ namespace Application.Services
 
             return city;
         }
-        public async Task AddCityAsync(CityDTO city)
+        public async Task AddCityAsync(CityDTOForAdd cityDTO)
         {
-            if (city == null)
-                throw new ArgumentNullException(nameof(city));
+            if (cityDTO == null)
+                throw new ArgumentNullException(nameof(cityDTO));
 
-            var cityDTOs = _mapper.Map<City>(city);
-            await _cityRepository.AddAsync(cityDTOs);
+            var cityEntity = _mapper.Map<City>(cityDTO);
+
+            if (string.IsNullOrWhiteSpace(cityEntity.PostOfficeCode))
+                throw new ArgumentException("PostOfficeCode cannot be null or empty.");
+
+            await _cityRepository.AddAsync(cityEntity);
         }
+
         public async Task UpdateCityAsync(CityDTO cityDTO, Guid id)
         {
             if (cityDTO == null)

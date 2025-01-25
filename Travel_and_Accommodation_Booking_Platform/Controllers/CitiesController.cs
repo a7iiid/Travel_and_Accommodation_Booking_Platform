@@ -1,9 +1,14 @@
 ﻿using Application.DTOs.CityDTOs;
 using Application.Services;
+using Application.Validators;
 using Domain.Entities;
 using Domain.Model;
+using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.model;
+using Presentation.Validetors.AuthentcationValdetors;
+using Presentation.Validetors.cityValidetors;
 
 namespace Presentation.Controllers
 {
@@ -13,7 +18,7 @@ namespace Presentation.Controllers
     public class CitiesController : ControllerBase
     {
         private readonly CityServices _cityService;
-
+       
         public CitiesController(CityServices cityService)
         {
             _cityService = cityService ?? throw new ArgumentNullException(nameof(cityService));
@@ -72,12 +77,21 @@ namespace Presentation.Controllers
         /// <returns>A confirmation message upon successful addition.</returns>
         [HttpPost]
         [Authorize("Admin")]
-
-        public async Task<IActionResult> AddCity(CityDTO cityDTO)
+        public async Task<IActionResult> AddCity([FromBody] CityDTOForAdd cityDTO)
         {
+            var validator = new CityDTOForAddValidetor();
+            var validationResult = await validator.ValidateAsync(cityDTO);
+
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
+                return BadRequest(new { Errors = errors });
+            }
+
             await _cityService.AddCityAsync(cityDTO);
             return Ok("City added successfully.");
         }
+
 
         /// <summary>
         /// Updates an existing city.
@@ -90,10 +104,19 @@ namespace Presentation.Controllers
 
         public async Task<IActionResult> UpdateCity(Guid id, CityDTO cityDTO)
         {
+            // Validate the cityDTO
+            var validator = new CityDTOValidator();
+
+            var validationResult = await validator.ValidateAsync(cityDTO);
+            if (!validationResult.IsValid)
+            {
+                var errors = validationResult.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
+                return BadRequest(new { Errors = errors });
+            }
+
             await _cityService.UpdateCityAsync(cityDTO, id);
             return NoContent();
         }
-
         /// <summary>
         /// Deletes a city by its unique ID.
         /// </summary>
