@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Repository
 {
-    internal class HotelRepository : Repository<Hotel>
+    public class HotelRepository : Repository<Hotel>
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<HotelRepository> _logger;
