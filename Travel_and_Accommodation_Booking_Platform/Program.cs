@@ -86,7 +86,7 @@ services.AddVersionedApiExplorer(options =>
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
-
+//roll 
 services.AddAuthorization(options =>
     options.AddPolicy("Admin", policy =>
     {
@@ -101,9 +101,14 @@ services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 services.AddScoped<UserService>();
 services.AddScoped<IRepository<City>, CityRepository>();
 services.AddScoped<CityServices>();
+
 services.AddScoped<IRepository<Hotel>, HotelRepository>();
 services.AddScoped<HotelRepository>();
 services.AddScoped<HotelServices>();
+
+services.AddScoped<IRepository<Booking>, BookingRepository>();
+services.AddScoped<BookingServices>();
+services.AddScoped<BookingRepository>();
 
 
 builder.Services.AddAutoMapper(typeof(CityProfile));
