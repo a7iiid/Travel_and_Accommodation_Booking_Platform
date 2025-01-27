@@ -106,9 +106,13 @@ services.AddScoped<IRepository<Hotel>, HotelRepository>();
 services.AddScoped<HotelRepository>();
 services.AddScoped<HotelServices>();
 
+services.AddScoped<IRepository<Room>, RoomRepository>();
+services.AddScoped<RoomRepository>();
+
 services.AddScoped<IRepository<Booking>, BookingRepository>();
-services.AddScoped<BookingServices>();
 services.AddScoped<BookingRepository>();
+services.AddScoped<BookingServices>();
+
 
 
 builder.Services.AddAutoMapper(typeof(CityProfile));
