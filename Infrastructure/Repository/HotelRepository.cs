@@ -3,11 +3,7 @@ using Domain.Model;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Infrastructure.Repository
 {
@@ -28,6 +24,7 @@ namespace Infrastructure.Repository
         {
             try
             {
+                
                 var query = _context.Hotels.AsQueryable();
                 var totalItemCount = await query.CountAsync();
                 var pageData = new PageData(totalItemCount, pageSize, pageNumber);
@@ -75,8 +72,19 @@ namespace Infrastructure.Repository
                                join roomType in _context.RoomTypes on hotel.Id equals roomType.HotelId
                                join room in _context.Rooms on roomType.Id equals room.RoomTypeId
                                where roomType.HotelId.Equals(hotelId)
-                               select room
-                ).ToListAsync();
+                               select new Room
+                               {
+                                   Id = room.Id,
+                                   RoomTypeId = room.RoomTypeId,
+                                   Capacity = room.Capacity,
+                                   Rating = room.Rating,
+                                   RoomType = roomType 
+                               }).ToListAsync();
+           
+
+
+
+
 
             return rooms.Where(room =>
                 IsRoomAvailable(

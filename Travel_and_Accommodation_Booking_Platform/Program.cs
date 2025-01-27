@@ -101,6 +101,10 @@ services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 services.AddScoped<UserService>();
 services.AddScoped<IRepository<City>, CityRepository>();
 services.AddScoped<CityServices>();
+services.AddScoped<IRepository<Hotel>, HotelRepository>();
+services.AddScoped<HotelRepository>();
+services.AddScoped<HotelServices>();
+
 
 builder.Services.AddAutoMapper(typeof(CityProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));

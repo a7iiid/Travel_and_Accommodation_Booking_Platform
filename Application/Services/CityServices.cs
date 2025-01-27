@@ -34,6 +34,7 @@ namespace Application.Services
                 pageNumber,
                 pageSize);
         }
+
         public async Task<PaginatedList<CityDTOWithoutHotels>> GetCitiesWithOutHotelsAsync(
          string? searchQuery,
          int pageNumber,
@@ -43,6 +44,7 @@ namespace Application.Services
             var cityDTOs = _mapper.Map<List<CityDTOWithoutHotels>>(cities.Items);
             return new PaginatedList<CityDTOWithoutHotels>(cityDTOs, cities.PageData);
         }
+
         public async Task<City> GetCityByIdAsync(Guid cityId)
         {
             var city = await _cityRepository.GetByIdAsync(cityId);

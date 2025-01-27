@@ -22,20 +22,29 @@ namespace Application.Services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<PaginatedList<HotelDTO>> GetHotelsAsync(string? searchQuery, int pageNumber, int pageSize)
+        public async Task<PaginatedList<Hotel>> GetHotelsAsync(string? searchQuery, int pageNumber, int pageSize)
         {
 
             var hotels = await _customHotelRepository.GetAllAsync(searchQuery, pageNumber, pageSize);
-            var hotelDTOs = _mapper.Map<List<HotelDTO>>(hotels.Items);
 
-            return new PaginatedList<HotelDTO>(hotelDTOs, hotels.PageData);
+            return new PaginatedList<Hotel>(hotels.Items, hotels.PageData);
         }
 
-        public async Task<List<RoomDTO>> GetAvailableRoomsAsync(Guid hotelId, DateTime checkInDate, DateTime checkOutDate)
+
+        public async Task<HotelDTO> GetHotelByIdAsync(Guid id)
+        {
+            var hotel = await _customHotelRepository.GetByIdAsync(id);
+            if (hotel == null)
+                throw new KeyNotFoundException($"Hotel with ID {id} not found.");
+
+            return _mapper.Map<HotelDTO>(hotel);
+        }
+
+        public async Task<List<Room>> GetAvailableRoomsAsync(Guid hotelId, DateTime checkInDate, DateTime checkOutDate)
         {
 
             var rooms = await _customHotelRepository.GetHotelAvailableRoomsAsync(hotelId, checkInDate, checkOutDate);
-            return _mapper.Map<List<RoomDTO>>(rooms);
+            return _mapper.Map<List<Room>>(rooms);
         }
 
         public async Task<PaginatedList<HotelSearchResult>> SearchHotelsAsync(HotelSearchParameters searchParams)
