@@ -1,6 +1,4 @@
-﻿
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class Booking
     {
@@ -12,6 +10,7 @@ namespace Domain.Entities
         public DateTime BookingDate { get; set; } = DateTime.UtcNow;
         public double Price { get; set; }
         public Payment? Payment { get; set; }
+        public Review? Review { get; set; } // Keep this relationship
         public Room Room { get; set; }
         public User User { get; set; }
     }
