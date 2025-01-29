@@ -33,6 +33,8 @@ namespace Infrastructure.Auth
 
             var claimsForToken = new List<Claim>
         {
+            new ("Id", user.Id.ToString()), // UserId
+
             new("Email", user.Email),
             new("isAdmin", user.IsAdmin.ToString()),
             new("Name", user.FirstName + " " + user.LastName)

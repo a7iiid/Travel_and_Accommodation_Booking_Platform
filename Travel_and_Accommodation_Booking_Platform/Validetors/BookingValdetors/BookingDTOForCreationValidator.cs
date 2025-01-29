@@ -12,10 +12,7 @@ namespace Application.Validators
                 .NotEmpty().WithMessage("RoomId is required.")
                 .NotEqual(Guid.Empty).WithMessage("RoomId must be a valid GUID.");
 
-            // Rule for UserId
-            RuleFor(booking => booking.UserId)
-                .NotEmpty().WithMessage("UserId is required.")
-                .NotEqual(Guid.Empty).WithMessage("UserId must be a valid GUID.");
+            
 
             // Rule for CheckInDate
             RuleFor(booking => booking.CheckInDate)

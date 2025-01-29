@@ -52,30 +52,24 @@ namespace API.Controllers
         /// <param name="bookingDto">Booking details</param>
         /// <returns>Created booking</returns>
         [HttpPost]
-        public async Task<IActionResult> CreateBooking([FromBody] BookingDTO bookingDto)
+        public async Task<IActionResult> CreateBooking([FromBody] BookingDTOForCreation bookingDto)
         {
-            var validator = new BookingDTOValidator();
-            var validationResult = await validator.ValidateAsync(bookingDto);
+            var userId = User.FindFirst("Id")?.Value;
 
-            if (!validationResult.IsValid)
+            if (string.IsNullOrEmpty(userId))
             {
-                var errors = validationResult.Errors.Select(e => new { e.PropertyName, e.ErrorMessage });
-                return BadRequest(new { Errors = errors });
+                return Unauthorized("User ID not found in claims.");
             }
 
-            try
-            {
-                var createdBooking = await _bookingServices.CreateBookingAsync(bookingDto);
-                if (createdBooking == null)
-                    return BadRequest("The room is unavailable for the selected dates.");
+            bookingDto.UserId = Guid.Parse(userId);
 
-                return CreatedAtAction(nameof(GetBookingById), new { id = createdBooking.UserId }, createdBooking);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+            var createdBooking = await _bookingServices.CreateBookingAsync(bookingDto);
+            if (createdBooking == null)
+                return BadRequest("The room is unavailable for the selected dates.");
+
+            return CreatedAtAction(nameof(GetBookingById), new { id = createdBooking.UserId }, createdBooking);
+        
+    }
 
         /// <summary>
         /// Update an existing booking

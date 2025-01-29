@@ -47,7 +47,7 @@ namespace Application.Services
         /// </summary>
         /// <param name="bookingDto">The BookingDTO containing booking details.</param>
         /// <returns>The created BookingDTO</returns>
-        public async Task<BookingDTO?> CreateBookingAsync(BookingDTO bookingDto)
+        public async Task<BookingDTO?> CreateBookingAsync(BookingDTOForCreation bookingDto)
         {
             // Validate room availability
             if (!await _bookingRepository.CanBookRoom(
