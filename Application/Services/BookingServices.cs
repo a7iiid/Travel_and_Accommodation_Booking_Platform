@@ -10,16 +10,19 @@ namespace Application.Services
     {
         private readonly BookingRepository _bookingRepository;
         private readonly RoomRepository _roomRepository;
+        private readonly PaymentRepository _paymentRepository;
         private readonly IMapper _mapper;
         public BookingServices(
             BookingRepository bookingRepository,
             RoomRepository roomRepository,
+            PaymentRepository paymentRepository,
             IMapper mapper)
-        {
-            _bookingRepository = bookingRepository;
-            _roomRepository = roomRepository;
-            _mapper = mapper;
-        }
+            {
+                _bookingRepository = bookingRepository;
+                _roomRepository = roomRepository;
+                _paymentRepository = paymentRepository;
+                _mapper = mapper;
+            }
 
         /// <summary>
         /// Gets all bookings.

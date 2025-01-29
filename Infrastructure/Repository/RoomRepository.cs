@@ -83,11 +83,16 @@ namespace Infrastructure.Repository
                 .AnyAsync();
         }
 
-       
+        public async Task<Room?> GetRoomWithTypeAsync(Guid roomId)
+        {
+            return await _context.Rooms
+                .Include(r => r.RoomType)
+                .FirstOrDefaultAsync(r => r.Id == roomId);
+        }
 
-        
 
-       
+
+
     }
 
 }
