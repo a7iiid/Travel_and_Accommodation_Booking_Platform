@@ -54,22 +54,22 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] BookingDTOForCreation bookingDto)
         {
+            // Get user ID from claims
             var userId = User.FindFirst("Id")?.Value;
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
+                return Unauthorized("Invalid user");
 
-            if (string.IsNullOrEmpty(userId))
+
+            try
             {
-                return Unauthorized("User ID not found in claims.");
+                var createdBooking = await _bookingServices.CreateBookingAsync(bookingDto, userGuid);
+                return CreatedAtAction(nameof(GetBookingById), new { id = createdBooking.Id }, createdBooking);
             }
-
-            bookingDto.UserId = Guid.Parse(userId);
-
-            var createdBooking = await _bookingServices.CreateBookingAsync(bookingDto);
-            if (createdBooking == null)
-                return BadRequest("The room is unavailable for the selected dates.");
-
-            return CreatedAtAction(nameof(GetBookingById), new { id = createdBooking.UserId }, createdBooking);
-        
-    }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         /// <summary>
         /// Update an existing booking

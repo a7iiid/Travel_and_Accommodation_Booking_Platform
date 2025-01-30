@@ -30,14 +30,7 @@ namespace Application.Validators
             RuleFor(booking => booking.Price)
                 .GreaterThan(0).WithMessage("Price must be greater than zero.");
 
-            // Optional validations for Review and Payment
-            RuleFor(booking => booking.Review)
-                .Must(review => review == null || !string.IsNullOrWhiteSpace(review.Comment))
-                .WithMessage("Review comment must not be empty if a review is provided.");
-
-            RuleFor(booking => booking.Payment)
-                .Must(payment => payment == null || payment.Amount > 0)
-                .WithMessage("Payment amount must be greater than zero if payment is provided.");
+            
         }
     }
 }

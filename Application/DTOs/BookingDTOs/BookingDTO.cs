@@ -1,4 +1,5 @@
-﻿using Domain.Enum;
+﻿using Application.DTOs.ReviewDTOs;
+using Domain.Enum;
 
 public record BookingDTO
 {

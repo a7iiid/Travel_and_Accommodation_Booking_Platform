@@ -113,6 +113,8 @@ services.AddScoped<IRepository<Booking>, BookingRepository>();
 services.AddScoped<BookingRepository>();
 services.AddScoped<BookingServices>();
 
+services.AddScoped<IRepository<Payment>, PaymentRepository>();
+services.AddScoped<PaymentRepository>();
 
 
 builder.Services.AddAutoMapper(typeof(CityProfile));

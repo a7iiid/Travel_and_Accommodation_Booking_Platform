@@ -15,7 +15,6 @@ namespace Application.profile
             CreateMap<BookingDTO, Booking>();
             CreateMap<BookingDTOForCreation, Booking>()
                 .ForMember(dest => dest.RoomId, opt => opt.MapFrom(src => src.RoomId))
-                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.CheckInDate, opt => opt.MapFrom(src => src.CheckInDate))
                 .ForMember(dest => dest.CheckOutDate, opt => opt.MapFrom(src => src.CheckOutDate))
                 .ForMember(dest => dest.BookingDate, opt => opt.Ignore())

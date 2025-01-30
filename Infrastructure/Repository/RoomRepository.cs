@@ -89,6 +89,14 @@ namespace Infrastructure.Repository
                 .Include(r => r.RoomType)
                 .FirstOrDefaultAsync(r => r.Id == roomId);
         }
+        public async Task<float?> GetRoomWithPriceAsync(Guid roomId)
+        {
+            var room = await _context.Rooms
+                .Include(r => r.RoomType)
+                .FirstOrDefaultAsync(r => r.Id == roomId);
+
+            return room?.RoomType?.PricePerNight;
+        }
 
 
 

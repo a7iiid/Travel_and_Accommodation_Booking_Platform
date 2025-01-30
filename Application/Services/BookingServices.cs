@@ -3,6 +3,7 @@ using Domain.Interfaces;
 using Application.DTOs.BookingDTOs;
 using AutoMapper;
 using Infrastructure.Repository;
+using Domain.Enum;
 
 namespace Application.Services
 {
@@ -50,23 +51,65 @@ namespace Application.Services
         /// </summary>
         /// <param name="bookingDto">The BookingDTO containing booking details.</param>
         /// <returns>The created BookingDTO</returns>
-        public async Task<BookingDTO?> CreateBookingAsync(BookingDTOForCreation bookingDto)
+        public async Task<BookingDTO?> CreateBookingAsync(BookingDTOForCreation bookingDto,Guid userGuid)
         {
-            // Validate room availability
-            if (!await _bookingRepository.CanBookRoom(
-                bookingDto.RoomId,
-                bookingDto.CheckInDate,
-                bookingDto.CheckOutDate))
+            double? pricePerNight = await _roomRepository.GetRoomWithPriceAsync(bookingDto.RoomId);
+            if (pricePerNight == null)
             {
-                throw new InvalidOperationException("The selected room is not available for the given dates.");
+                throw new InvalidOperationException("Room not found");
+                
+            }
+            int nights = CalculateNights(bookingDto);
+
+            var price = pricePerNight * nights;
+
+            // Create booking
+            var booking = new Booking
+            {
+                RoomId = bookingDto.RoomId,
+                UserId = userGuid,
+                CheckInDate = bookingDto.CheckInDate,
+                CheckOutDate = bookingDto.CheckOutDate,
+                Price = (double)price,
+                BookingDate = DateTime.UtcNow
+            };
+
+            // Check availability
+            if (!await _bookingRepository.CanBookRoom(
+                booking.RoomId,
+                booking.CheckInDate,
+                booking.CheckOutDate))
+            {
+                throw new InvalidOperationException("Room not available for selected dates");
             }
 
-            // Map DTO to entity
-            var booking = _mapper.Map<Booking>(bookingDto);
-
-            // Add booking to the repository
+            // Create booking
             var createdBooking = await _bookingRepository.AddAsync(booking);
-            return createdBooking == null ? null : _mapper.Map<BookingDTO>(createdBooking);
+            if (createdBooking == null) return null;
+
+            // Create payment
+            var payment = new Payment
+            {
+                BookingId = createdBooking.Id,
+                Amount = (double)price,
+                Method = bookingDto.PaymentMethod,
+                Status = PaymentStatus.Pending
+            };
+
+            await _paymentRepository.AddAsync(payment);
+
+            return _mapper.Map<BookingDTO>(createdBooking);
+        }
+
+     
+
+        private static int CalculateNights(BookingDTOForCreation bookingDto)
+        {
+
+            // Calculate price based on room type and duration
+            var nights = (bookingDto.CheckOutDate.Date - bookingDto.CheckInDate.Date).Days;
+            if (nights <= 0) throw new InvalidOperationException("Invalid date range");
+            return nights;
         }
 
         /// <summary>
