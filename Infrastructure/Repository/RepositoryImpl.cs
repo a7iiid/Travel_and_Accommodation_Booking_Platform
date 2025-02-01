@@ -73,7 +73,11 @@ namespace Infrastructure.Repository
             {
                 var entity = await _context.Set<T>().FindAsync(id);
                 if (entity == null)
+                {
+                    log.LogError($"Entity of type {typeof(T).Name} with ID {id} was not found.");
                     throw new NotFoundException($"Entity of type {typeof(T).Name} with ID {id} was not found.");
+
+                }
                 return entity;
             }
             catch (Exception ex)
@@ -87,10 +91,8 @@ namespace Infrastructure.Repository
         {
             try
             {
-                var entity = await _context.Set<T>().FindAsync(id);
-                if (entity == null)
-                    throw new NotFoundException($"Entity of type {typeof(T).Name} with ID {id} was not found.");
-
+                var entity = await GetByIdAsync(id);
+               
                 _context.Set<T>().Remove(entity);
                 await SaveChangesAsync();
                 return true;
@@ -127,9 +129,10 @@ namespace Infrastructure.Repository
                 if (entity == null)
                     throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
 
-                var existingEntity = await _context.Set<T>().FindAsync(id);
-                if (existingEntity == null)
-                    throw new KeyNotFoundException($"Entity of type {typeof(T).Name} with ID {id} was not found.");
+                var existingEntity = await GetByIdAsync(id);
+                
+
+                    
 
                 _context.Entry(existingEntity).CurrentValues.SetValues(entity);
 
