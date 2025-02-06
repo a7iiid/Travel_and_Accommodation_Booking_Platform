@@ -107,7 +107,8 @@ namespace Infrastructure.Repository
             }
 
             var roomFilterQuery = FindAvailableRoomsWithCapacity(
-                searchParams.Capacity,
+                searchParams.Adults,
+                searchParams.Children,
                 searchParams.CheckInDate,
                 searchParams.CheckOutDate);
 
@@ -144,10 +145,11 @@ namespace Infrastructure.Repository
         }
 
       
-        private IQueryable<Room> FindAvailableRoomsWithCapacity(int adults, DateTime checkInDate, DateTime checkOutDate)
+        private IQueryable<Room> FindAvailableRoomsWithCapacity(int adults,int children, DateTime checkInDate, DateTime checkOutDate)
         {
             return from room in _context.Rooms
-                   where room.Capacity == adults &&
+                   where room.AdultsCapacity == adults &&
+                          room.ChildrenCapacity==children &&
                          _context.Bookings.Where(booking => booking.RoomId == room.Id).All
                          (booking => checkInDate.Date > booking.CheckOutDate.Date ||
                          checkOutDate.Date < booking.CheckInDate.Date)
