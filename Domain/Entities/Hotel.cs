@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 
 namespace Domain.Entities
 {
@@ -13,5 +12,7 @@ namespace Domain.Entities
         public string Description { get; set; }
         public string PhoneNumber { get; set; }
         public int FloorsNumber { get; set; }
+        public Guid OwnerId { get; set; }
+
     }
 }
