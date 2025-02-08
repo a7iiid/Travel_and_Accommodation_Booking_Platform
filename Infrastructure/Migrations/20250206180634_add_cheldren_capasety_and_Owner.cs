@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class add_cheldren_capasety_and_Owner : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -60,13 +60,13 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    isAdmin = table.Column<bool>(type: "bit", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    isAdmin = table.Column<bool>(type: "bit", nullable: false)
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -84,7 +84,8 @@ namespace Infrastructure.Migrations
                     StreetAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FloorsNumber = table.Column<int>(type: "int", nullable: false)
+                    FloorsNumber = table.Column<int>(type: "int", nullable: false),
+                    OwnerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -127,7 +128,8 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     RoomTypeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    AdultsCapacity = table.Column<int>(type: "int", nullable: false),
+                    ChildrenCapacity = table.Column<int>(type: "int", nullable: false),
                     Rating = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
@@ -156,6 +158,12 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Bookings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Rooms_RoomId",
+                        column: x => x.RoomId,
+                        principalTable: "Rooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Bookings_Users_UserId",
                         column: x => x.UserId,
@@ -221,8 +229,8 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "Category", "HotelId", "PricePerNight" },
                 values: new object[,]
                 {
-                    { new Guid("4b4c0ea5-0b9a-4a20-8ad9-77441fb912d2"), 2, new Guid("9461e08b-92d3-45da-b6b3-efc0cfcc4a3a"), 200f },
-                    { new Guid("5a5de3b8-3ed8-4f0a-bda9-cf73225a64a1"), 0, new Guid("98c2c9fe-1a1c-4eaa-a7f5-b9d19b246c27"), 100f },
+                    { new Guid("4b4c0ea5-0b9a-4a20-8ad9-77441fb912d2"), 4, new Guid("9461e08b-92d3-45da-b6b3-efc0cfcc4a3a"), 200f },
+                    { new Guid("5a5de3b8-3ed8-4f0a-bda9-cf73225a64a1"), 1, new Guid("98c2c9fe-1a1c-4eaa-a7f5-b9d19b246c27"), 100f },
                     { new Guid("d67ddbe4-1f1a-4d85-bcc1-ec3a475ecb68"), 3, new Guid("bfa4173d-7893-48b9-a497-5f4c7fb2492b"), 150f }
                 });
 
@@ -233,7 +241,27 @@ namespace Infrastructure.Migrations
                 {
                     { new Guid("aaf21a7d-8fc3-4c9f-8a8e-1eeec8dcd462"), "alice.smith@example.com", "Alice", "Smith", "hashedpassword2", "0987654321", "salt2", false },
                     { new Guid("c6c45f7c-2dfe-4c1e-9a9b-8b173c71b32c"), "john.doe@example.com", "John", "Doe", "hashedpassword1", "1234567890", "salt1", false },
-                    { new Guid("f44c3eb4-2c8a-4a77-a31b-04c4619aa15a"), "robert.johnson@example.com", "Robert", "Johnson", "hashedpassword3", "1122334455", "salt3", true }
+                    { new Guid("f44c3eb4-2c8a-4a77-a31b-04c4619aa15a"), "a@email.com", "Robert", "Johnson", "hashedpassword3", "A@a123456", "salt3", true }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Hotels",
+                columns: new[] { "Id", "CityId", "Description", "FloorsNumber", "Name", "OwnerId", "PhoneNumber", "Rating", "StreetAddress" },
+                values: new object[,]
+                {
+                    { new Guid("9461e08b-92d3-45da-b6b3-efc0cfcc4a3a"), new Guid("3c7e66f5-46a9-4b8d-8e90-85b5a9e2c2fd"), "A resort with breathtaking sunset views over the ocean.", 5, "Sunset Resort", new Guid("77b2c30b-65d0-4ea7-8a5e-71e7c294f117"), "312345678", 4.2f, "789 Beachfront Road" },
+                    { new Guid("98c2c9fe-1a1c-4eaa-a7f5-b9d19b246c27"), new Guid("f9e85d04-548c-4f98-afe9-2a8831c62a90"), "A luxurious hotel with top-notch amenities.", 10, "Luxury Inn", new Guid("a1d1aa11-12e7-4e0f-8425-67c1c1e62c2d"), "1234567890", 4.5f, "123 Main Street" },
+                    { new Guid("bfa4173d-7893-48b9-a497-5f4c7fb2492b"), new Guid("8d2aeb7a-7c67-4911-aa2c-d6a3b4dc7e9e"), "A cozy lodge nestled in the heart of nature.", 3, "Cozy Lodge", new Guid("a1d1aa11-12e7-4e0f-8425-67c1c1e62c2d"), "2012345678", 3.8f, "456 Oak Avenue" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Rooms",
+                columns: new[] { "Id", "AdultsCapacity", "ChildrenCapacity", "Rating", "RoomTypeId" },
+                values: new object[,]
+                {
+                    { new Guid("4e1cb3d9-bc3b-4997-a3d5-0c56cf17fe7a"), 3, 2, 4.2f, new Guid("d67ddbe4-1f1a-4d85-bcc1-ec3a475ecb68") },
+                    { new Guid("a98b8a9d-4c5a-4a90-a2d2-5f1441b93db6"), 2, 1, 4.5f, new Guid("5a5de3b8-3ed8-4f0a-bda9-cf73225a64a1") },
+                    { new Guid("c6898b7e-ee09-4b36-8b20-22e8c2a63e29"), 4, 1, 4.8f, new Guid("4b4c0ea5-0b9a-4a20-8ad9-77441fb912d2") }
                 });
 
             migrationBuilder.InsertData(
@@ -241,25 +269,10 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "BookingDate", "CheckInDate", "CheckOutDate", "Price", "RoomId", "UserId" },
                 values: new object[,]
                 {
-                    { new Guid("0bf4a177-98b8-4f67-8a56-95669c320890"), new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 200.0, new Guid("c6898b7e-ee09-4b36-8b20-22e8c2a63e29"), new Guid("f44c3eb4-2c8a-4a77-a31b-04c4619aa15a") },
-                    { new Guid("7d3155a2-95f8-4d9b-bc24-662ae053f1c9"), new DateTime(2025, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 100.0, new Guid("a98b8a9d-4c5a-4a90-a2d2-5f1441b93db6"), new Guid("aaf21a7d-8fc3-4c9f-8a8e-1eeec8dcd462") },
-                    { new Guid("efeb3d13-3dab-46c9-aa9a-9f22dd58e06e"), new DateTime(2025, 1, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2025, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 150.0, new Guid("4e1cb3d9-bc3b-4997-a3d5-0c56cf17fe7a"), new Guid("c6c45f7c-2dfe-4c1e-9a9b-8b173c71b32c") }
+                    { new Guid("0bf4a177-98b8-4f67-8a56-95669c320890"), new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), 200.0, new Guid("c6898b7e-ee09-4b36-8b20-22e8c2a63e29"), new Guid("f44c3eb4-2c8a-4a77-a31b-04c4619aa15a") },
+                    { new Guid("7d3155a2-95f8-4d9b-bc24-662ae053f1c9"), new DateTime(2023, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 100.0, new Guid("a98b8a9d-4c5a-4a90-a2d2-5f1441b93db6"), new Guid("c6c45f7c-2dfe-4c1e-9a9b-8b173c71b32c") },
+                    { new Guid("efeb3d13-3dab-46c9-aa9a-9f22dd58e06e"), new DateTime(2023, 1, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), 150.0, new Guid("4e1cb3d9-bc3b-4997-a3d5-0c56cf17fe7a"), new Guid("aaf21a7d-8fc3-4c9f-8a8e-1eeec8dcd462") }
                 });
-
-            migrationBuilder.InsertData(
-                table: "Hotels",
-                columns: new[] { "Id", "CityId", "Description", "FloorsNumber", "Name", "PhoneNumber", "Rating", "StreetAddress" },
-                values: new object[,]
-                {
-                    { new Guid("9461e08b-92d3-45da-b6b3-efc0cfcc4a3a"), new Guid("3c7e66f5-46a9-4b8d-8e90-85b5a9e2c2fd"), "A resort with breathtaking sunset views over the ocean.", 5, "Sunset Resort", "312345678", 4.2f, "789 Beachfront Road" },
-                    { new Guid("98c2c9fe-1a1c-4eaa-a7f5-b9d19b246c27"), new Guid("f9e85d04-548c-4f98-afe9-2a8831c62a90"), "A luxurious hotel with top-notch amenities.", 10, "Luxury Inn", "1234567890", 4.5f, "123 Main Street" },
-                    { new Guid("bfa4173d-7893-48b9-a497-5f4c7fb2492b"), new Guid("8d2aeb7a-7c67-4911-aa2c-d6a3b4dc7e9e"), "A cozy lodge nestled in the heart of nature.", 3, "Cozy Lodge", "2012345678", 3.8f, "456 Oak Avenue" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "Rooms",
-                columns: new[] { "Id", "Capacity", "Rating", "RoomTypeId" },
-                values: new object[] { new Guid("a98b8a9d-4c5a-4a90-a2d2-5f1441b93db6"), 2, 4.5f, new Guid("5a5de3b8-3ed8-4f0a-bda9-cf73225a64a1") });
 
             migrationBuilder.InsertData(
                 table: "Payments",
@@ -276,10 +289,15 @@ namespace Infrastructure.Migrations
                 columns: new[] { "Id", "BookingId", "Comment", "Rating", "ReviewDate" },
                 values: new object[,]
                 {
-                    { new Guid("192045db-c6db-49c9-aa6b-2e3d6c7f3b79"), new Guid("7d3155a2-95f8-4d9b-bc24-662ae053f1c9"), "Clean rooms and beautiful views.", 4.2f, new DateTime(2023, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("63e4bb25-28b1-4fc4-9b93-9254d94dab23"), new Guid("0bf4a177-98b8-4f67-8a56-95669c320890"), "Excellent service and comfortable stay!", 4.8f, new DateTime(2023, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { new Guid("85a5a0b4-0e04-4c46-b7ac-6cf609e4f2aa"), new Guid("efeb3d13-3dab-46c9-aa9a-9f22dd58e06e"), "Friendly staff and great location.", 4.5f, new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { new Guid("192045db-c6db-49c9-aa6b-2e3d6c7f3b79"), new Guid("7d3155a2-95f8-4d9b-bc24-662ae053f1c9"), "Clean rooms and beautiful views.", 4.2f, new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("63e4bb25-28b1-4fc4-9b93-9254d94dab23"), new Guid("0bf4a177-98b8-4f67-8a56-95669c320890"), "Excellent service and comfortable stay!", 4.8f, new DateTime(2025, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { new Guid("85a5a0b4-0e04-4c46-b7ac-6cf609e4f2aa"), new Guid("efeb3d13-3dab-46c9-aa9a-9f22dd58e06e"), "Friendly staff and great location.", 4.5f, new DateTime(2024, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_RoomId",
+                table: "Bookings",
+                column: "RoomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_UserId",
@@ -330,9 +348,6 @@ namespace Infrastructure.Migrations
                 name: "RoomAmenityRoomType");
 
             migrationBuilder.DropTable(
-                name: "Rooms");
-
-            migrationBuilder.DropTable(
                 name: "Cities");
 
             migrationBuilder.DropTable(
@@ -342,10 +357,13 @@ namespace Infrastructure.Migrations
                 name: "RoomAmenities");
 
             migrationBuilder.DropTable(
-                name: "RoomTypes");
+                name: "Rooms");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "RoomTypes");
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Domain.Entities
         public string PhoneNumber { get; set; }
         public int FloorsNumber { get; set; }
         public Guid OwnerId { get; set; }
+        public City City { get; set; }
 
     }
 }

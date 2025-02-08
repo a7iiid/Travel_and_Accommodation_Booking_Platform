@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.BookingDTOs;
 using Application.Services;
 using Application.Validators;
+using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,14 @@ namespace API.Controllers
     public class BookingController : ControllerBase
     {
         private readonly BookingServices _bookingServices;
+        private readonly IMapper _mapper;
 
-        public BookingController(BookingServices bookingServices)
+
+        public BookingController(BookingServices bookingServices, IMapper mapper)
         {
             _bookingServices = bookingServices;
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+
         }
 
         /// <summary>
@@ -40,10 +45,12 @@ namespace API.Controllers
         public async Task<IActionResult> GetBookingById(Guid id)
         {
             var booking = await _bookingServices.GetBookingByIdAsync(id);
+            
+
             if (booking == null)
                 return NotFound($"Booking with ID {id} not found.");
-
-            return Ok(booking);
+            var bookingDTO = _mapper.Map<BookingByIdDTO>(booking);
+            return Ok(bookingDTO);
         }
 
         /// <summary>

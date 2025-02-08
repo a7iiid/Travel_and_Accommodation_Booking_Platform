@@ -81,5 +81,15 @@ namespace Application.Services
 
             return await _customHotelRepository.DeleteAsync(id);
         }
+
+        public async Task<PaginatedList<HotelDTO>> GetHotelsByOwnerIdAsync(Guid id,int pageNumper,int pageSize)
+        {
+            var result =await _customHotelRepository.GetHotelsByOwnerIdAsync(id, pageSize, pageNumper);
+            var resultDTOs = _mapper.Map<List<HotelDTO>>(result.Items);
+
+
+            return  new PaginatedList<HotelDTO>(resultDTOs, result.PageData); ;
+
+        }
     }
 }

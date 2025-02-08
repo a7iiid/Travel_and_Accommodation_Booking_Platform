@@ -7,8 +7,8 @@ namespace Application.Validators
     {
         public HotelDTOValidator()
         {
-            RuleFor(x => x.CityId)
-                .NotEmpty().WithMessage("City ID is required.");
+            //RuleFor(x => x.CityId)
+            //    .NotEmpty().WithMessage("City ID is required.");
 
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Hotel name is required.")

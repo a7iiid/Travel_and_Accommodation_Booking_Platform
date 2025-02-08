@@ -1,8 +1,10 @@
 ﻿using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Model;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 
 namespace Infrastructure.Repository
@@ -76,7 +78,8 @@ namespace Infrastructure.Repository
                                {
                                    Id = room.Id,
                                    RoomTypeId = room.RoomTypeId,
-                                   Capacity = room.Capacity,
+                                   AdultsCapacity = room.AdultsCapacity,
+                                   ChildrenCapacity = room.ChildrenCapacity,
                                    Rating = room.Rating,
                                    RoomType = roomType 
                                }).ToListAsync();
@@ -154,6 +157,39 @@ namespace Infrastructure.Repository
                          (booking => checkInDate.Date > booking.CheckOutDate.Date ||
                          checkOutDate.Date < booking.CheckInDate.Date)
                    select room;
+        }
+        public async Task<PaginatedList<Hotel>> GetHotelsByOwnerIdAsync(
+     Guid ownerId,
+     int PageSize = 5,
+     int PageNumber = 1)
+        {
+            try
+            {
+                // Create base query
+                var baseQuery = _context.Hotels
+                    .Where(h => h.OwnerId == ownerId)
+                    .Include(h => h.City)
+                    .AsNoTracking();
+
+                // Get total count from database
+                var totalItemCount = await baseQuery.CountAsync();
+
+                // Apply pagination and execute query
+                var items = await baseQuery
+                    .Skip(PageSize * (PageNumber - 1))
+                    .Take(PageSize)
+                    .ToListAsync();
+
+                // Create page data
+                var pageData = new PageData(totalItemCount, PageSize, PageNumber);
+
+                return new PaginatedList<Hotel>(items, pageData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving hotels for owner {OwnerId}", ownerId);
+                throw new DataAccessException("Failed to retrieve hotels", ex);
+            }
         }
     }
 }

@@ -48,6 +48,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("RoomId");
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Bookings");
@@ -56,29 +58,29 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("7d3155a2-95f8-4d9b-bc24-662ae053f1c9"),
-                            BookingDate = new DateTime(2025, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckInDate = new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutDate = new DateTime(2025, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            BookingDate = new DateTime(2023, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInDate = new DateTime(2023, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutDate = new DateTime(2023, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Price = 100.0,
                             RoomId = new Guid("a98b8a9d-4c5a-4a90-a2d2-5f1441b93db6"),
-                            UserId = new Guid("aaf21a7d-8fc3-4c9f-8a8e-1eeec8dcd462")
-                        },
-                        new
-                        {
-                            Id = new Guid("efeb3d13-3dab-46c9-aa9a-9f22dd58e06e"),
-                            BookingDate = new DateTime(2025, 1, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckInDate = new DateTime(2025, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutDate = new DateTime(2025, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Price = 150.0,
-                            RoomId = new Guid("4e1cb3d9-bc3b-4997-a3d5-0c56cf17fe7a"),
                             UserId = new Guid("c6c45f7c-2dfe-4c1e-9a9b-8b173c71b32c")
                         },
                         new
                         {
+                            Id = new Guid("efeb3d13-3dab-46c9-aa9a-9f22dd58e06e"),
+                            BookingDate = new DateTime(2023, 1, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInDate = new DateTime(2023, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Price = 150.0,
+                            RoomId = new Guid("4e1cb3d9-bc3b-4997-a3d5-0c56cf17fe7a"),
+                            UserId = new Guid("aaf21a7d-8fc3-4c9f-8a8e-1eeec8dcd462")
+                        },
+                        new
+                        {
                             Id = new Guid("0bf4a177-98b8-4f67-8a56-95669c320890"),
-                            BookingDate = new DateTime(2025, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckInDate = new DateTime(2025, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            CheckOutDate = new DateTime(2025, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            BookingDate = new DateTime(2023, 3, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckInDate = new DateTime(2023, 3, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CheckOutDate = new DateTime(2023, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Price = 200.0,
                             RoomId = new Guid("c6898b7e-ee09-4b36-8b20-22e8c2a63e29"),
                             UserId = new Guid("f44c3eb4-2c8a-4a77-a31b-04c4619aa15a")
@@ -155,6 +157,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -180,6 +185,7 @@ namespace Infrastructure.Migrations
                             Description = "A luxurious hotel with top-notch amenities.",
                             FloorsNumber = 10,
                             Name = "Luxury Inn",
+                            OwnerId = new Guid("a1d1aa11-12e7-4e0f-8425-67c1c1e62c2d"),
                             PhoneNumber = "1234567890",
                             Rating = 4.5f,
                             StreetAddress = "123 Main Street"
@@ -191,6 +197,7 @@ namespace Infrastructure.Migrations
                             Description = "A cozy lodge nestled in the heart of nature.",
                             FloorsNumber = 3,
                             Name = "Cozy Lodge",
+                            OwnerId = new Guid("a1d1aa11-12e7-4e0f-8425-67c1c1e62c2d"),
                             PhoneNumber = "2012345678",
                             Rating = 3.8f,
                             StreetAddress = "456 Oak Avenue"
@@ -202,6 +209,7 @@ namespace Infrastructure.Migrations
                             Description = "A resort with breathtaking sunset views over the ocean.",
                             FloorsNumber = 5,
                             Name = "Sunset Resort",
+                            OwnerId = new Guid("77b2c30b-65d0-4ea7-8a5e-71e7c294f117"),
                             PhoneNumber = "312345678",
                             Rating = 4.2f,
                             StreetAddress = "789 Beachfront Road"
@@ -293,7 +301,7 @@ namespace Infrastructure.Migrations
                             BookingId = new Guid("0bf4a177-98b8-4f67-8a56-95669c320890"),
                             Comment = "Excellent service and comfortable stay!",
                             Rating = 4.8f,
-                            ReviewDate = new DateTime(2023, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            ReviewDate = new DateTime(2025, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -301,7 +309,7 @@ namespace Infrastructure.Migrations
                             BookingId = new Guid("efeb3d13-3dab-46c9-aa9a-9f22dd58e06e"),
                             Comment = "Friendly staff and great location.",
                             Rating = 4.5f,
-                            ReviewDate = new DateTime(2023, 2, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            ReviewDate = new DateTime(2024, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -309,7 +317,7 @@ namespace Infrastructure.Migrations
                             BookingId = new Guid("7d3155a2-95f8-4d9b-bc24-662ae053f1c9"),
                             Comment = "Clean rooms and beautiful views.",
                             Rating = 4.2f,
-                            ReviewDate = new DateTime(2023, 3, 18, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            ReviewDate = new DateTime(2024, 11, 18, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -319,7 +327,10 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Capacity")
+                    b.Property<int>("AdultsCapacity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChildrenCapacity")
                         .HasColumnType("int");
 
                     b.Property<float>("Rating")
@@ -338,9 +349,26 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("a98b8a9d-4c5a-4a90-a2d2-5f1441b93db6"),
-                            Capacity = 2,
+                            AdultsCapacity = 2,
+                            ChildrenCapacity = 1,
                             Rating = 4.5f,
                             RoomTypeId = new Guid("5a5de3b8-3ed8-4f0a-bda9-cf73225a64a1")
+                        },
+                        new
+                        {
+                            Id = new Guid("4e1cb3d9-bc3b-4997-a3d5-0c56cf17fe7a"),
+                            AdultsCapacity = 3,
+                            ChildrenCapacity = 2,
+                            Rating = 4.2f,
+                            RoomTypeId = new Guid("d67ddbe4-1f1a-4d85-bcc1-ec3a475ecb68")
+                        },
+                        new
+                        {
+                            Id = new Guid("c6898b7e-ee09-4b36-8b20-22e8c2a63e29"),
+                            AdultsCapacity = 4,
+                            ChildrenCapacity = 1,
+                            Rating = 4.8f,
+                            RoomTypeId = new Guid("4b4c0ea5-0b9a-4a20-8ad9-77441fb912d2")
                         });
                 });
 
@@ -386,7 +414,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("5a5de3b8-3ed8-4f0a-bda9-cf73225a64a1"),
-                            Category = 0,
+                            Category = 1,
                             HotelId = new Guid("98c2c9fe-1a1c-4eaa-a7f5-b9d19b246c27"),
                             PricePerNight = 100f
                         },
@@ -400,7 +428,7 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("4b4c0ea5-0b9a-4a20-8ad9-77441fb912d2"),
-                            Category = 2,
+                            Category = 4,
                             HotelId = new Guid("9461e08b-92d3-45da-b6b3-efc0cfcc4a3a"),
                             PricePerNight = 200f
                         });
@@ -469,11 +497,11 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = new Guid("f44c3eb4-2c8a-4a77-a31b-04c4619aa15a"),
-                            Email = "robert.johnson@example.com",
+                            Email = "a@email.com",
                             FirstName = "Robert",
                             LastName = "Johnson",
                             PasswordHash = "hashedpassword3",
-                            PhoneNumber = "1122334455",
+                            PhoneNumber = "A@a123456",
                             Salt = "salt3",
                             isAdmin = true
                         });
@@ -496,11 +524,19 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Booking", b =>
                 {
+                    b.HasOne("Domain.Entities.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.User", "User")
                         .WithMany("Bookings")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Room");
 
                     b.Navigation("User");
                 });
