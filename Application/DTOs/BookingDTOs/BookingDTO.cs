@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.ReviewDTOs;
+using Domain.Entities;
 using Domain.Enum;
 
 public record BookingDTO
@@ -11,7 +12,9 @@ public record BookingDTO
     public DateTime BookingDate { get; set; }
     public double Price { get; set; }
     public PaymentStatus PaymentStatus { get; set; }
-
-    // Include review details if available
-    public ReviewDTO? Review { get; set; }
+    
+    public Payment? Payment { get; set; }
+    public Review? Review { get; set; }
+    public Room Room { get; set; }
+    public User User { get; set; }
 }

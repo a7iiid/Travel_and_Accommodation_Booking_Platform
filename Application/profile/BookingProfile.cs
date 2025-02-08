@@ -11,6 +11,10 @@ namespace Application.profile
         public BookingProfile()
         {
             CreateMap<Booking, BookingDTO>();
+            CreateMap<Booking, BookingByIdDTO>();
+                
+            CreateMap<BookingByIdDTO, Booking>()
+                .ForMember(dest => dest.User, opt => opt.Ignore());
 
             CreateMap<BookingDTO, Booking>();
             CreateMap<BookingDTOForCreation, Booking>()

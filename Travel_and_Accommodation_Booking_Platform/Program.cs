@@ -121,6 +121,8 @@ builder.Services.AddAutoMapper(typeof(CityProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
 builder.Services.AddAutoMapper(typeof(HotelProfile));
 builder.Services.AddAutoMapper(typeof(RoomProfile));
+builder.Services.AddAutoMapper(typeof(BookingProfile));
+
 
 
 

@@ -14,7 +14,7 @@ namespace Infrastructure.DB.Seeding
             {
                 Id = new Guid("5a5de3b8-3ed8-4f0a-bda9-cf73225a64a1"),
                 HotelId = new Guid("98c2c9fe-1a1c-4eaa-a7f5-b9d19b246c27"),
-                Category = RoomCategory.Standard,
+                Category = RoomCategory.Deluxe,
                 PricePerNight = 100.0f
             },
             new()
@@ -28,7 +28,7 @@ namespace Infrastructure.DB.Seeding
             {
                 Id = new Guid("4b4c0ea5-0b9a-4a20-8ad9-77441fb912d2"),
                 HotelId = new Guid("9461e08b-92d3-45da-b6b3-efc0cfcc4a3a"),
-                Category = RoomCategory.Family,
+                Category = RoomCategory.Suite,
                 PricePerNight = 200.0f
             }
         };

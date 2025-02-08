@@ -34,6 +34,7 @@ namespace Application.profile
 
             CreateMap<CityDTOForAdd, City>()
                 .ForMember(dest => dest.PostOfficeCode, opt => opt.MapFrom(src => src.PostOffice));
+            
 
         }
     }

@@ -1,12 +1,9 @@
-﻿using Application.DTOs.CityDTOs;
-using Application.DTOs.HotelDTOs;
+﻿using Application.DTOs.HotelDTOs;
 using Application.DTOs.RoomDTOs;
 using Application.Services;
 using Application.Validators;
 using Domain.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 
 namespace Presentation.Controllers
 {
@@ -126,6 +123,20 @@ namespace Presentation.Controllers
         {
             var rooms = await _hotelService.GetAvailableRoomsAsync(hotelId, checkInDate, checkOutDate);
             return Ok(rooms);
+        }
+        [HttpGet("GetHotelsByOwnerIdAsync")]
+        public async Task<IActionResult> GetHotelsByOwner(Guid ownerId, int pageNumber = 1,
+            int pageSize = 10)
+        {
+            try
+            {
+                var hotels = await _hotelService.GetHotelsByOwnerIdAsync(ownerId,pageNumber,pageSize);
+                return Ok(hotels);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
     }

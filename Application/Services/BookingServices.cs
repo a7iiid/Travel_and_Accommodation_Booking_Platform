@@ -43,7 +43,12 @@ namespace Application.Services
         public async Task<Booking?> GetBookingByIdAsync(Guid bookingId)
         {
             var booking = await _bookingRepository.GetByIdAsync(bookingId);
-            return booking == null ? null :booking;
+            if (booking == null)
+            {
+                return null;
+            }
+            
+            return booking;
         }
 
         /// <summary>

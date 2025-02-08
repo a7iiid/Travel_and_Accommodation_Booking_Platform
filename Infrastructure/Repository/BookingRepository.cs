@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
 using Infrastructure.DB;
@@ -50,7 +51,31 @@ namespace Infrastructure.Repository
             }
         }
 
-       
+        public override Task<Booking> GetByIdAsync(Guid id)
+        {
+            try
+            {
+                var booking = _context.Bookings
+                            .Include(b=> b.Review)
+                            .Include(b=>b.Payment)
+                            .Include(b=>b.Room)
+                            
+                            .FirstOrDefaultAsync(b => b.Id == id);
+                if (booking == null)
+                {
+                    log.LogError($"Booking  with ID {id} was not found.");
+                    throw new NotFoundException($"Booking with ID {id} was not found.");
+
+                }
+                return booking;
+
+            }
+            catch (Exception ex)
+            {
+                log.LogError($"Error fetching entity by ID: {ex.Message}");
+                throw new DataAccessException("An error occurred while retrieving the booking.", ex);
+            }
+        }
 
         public override async Task<Booking?> AddAsync(Booking booking)
         {

@@ -8,10 +8,9 @@ namespace Domain.Entities
     {
         public Guid Id { get; set; }
         public Guid RoomTypeId { get; set; }
-        public int Capacity { get; set; }
-
+        public int AdultsCapacity { get; set; }
+        public int ChildrenCapacity { get; set; }
         public float Rating { get; set; }
-
         public RoomType RoomType { get; set; }
     }
 }
