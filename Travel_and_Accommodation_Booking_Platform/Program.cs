@@ -116,6 +116,10 @@ services.AddScoped<BookingServices>();
 services.AddScoped<IRepository<Payment>, PaymentRepository>();
 services.AddScoped<PaymentRepository>();
 
+builder.Services.AddScoped<PayPalService>();
+builder.Services.AddScoped<IPayPalService, PayPalService>();
+
+
 
 builder.Services.AddAutoMapper(typeof(CityProfile));
 builder.Services.AddAutoMapper(typeof(UserProfile));
