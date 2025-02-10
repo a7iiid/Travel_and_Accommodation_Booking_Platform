@@ -5,7 +5,7 @@ namespace Domain.Enum
 
     public enum PaymentMethod
     {
-        Reflect,
+        PayPal,
         AppelPay,
         Visa
     }

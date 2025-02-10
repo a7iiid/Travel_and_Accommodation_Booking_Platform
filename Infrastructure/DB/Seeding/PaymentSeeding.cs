@@ -30,7 +30,7 @@ namespace Infrastructure.DB.Seeding
             {
                 Id = new Guid("8f974636-4f53-48d9-af99-2f7f1d3e0474"),
                 BookingId = new Guid("7d3155a2-95f8-4d9b-bc24-662ae053f1c9"),
-                Method = PaymentMethod.Reflect,
+                Method = PaymentMethod.PayPal,
                 Status = PaymentStatus.Completed,
                 Amount = 2000.0
             }

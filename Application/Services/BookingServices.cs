@@ -20,11 +20,13 @@ namespace Application.Services
             BookingRepository bookingRepository,
             RoomRepository roomRepository,
             PaymentRepository paymentRepository,
+            IPaymentService paymentService,
             IMapper mapper)
             {
                 _bookingRepository = bookingRepository;
                 _roomRepository = roomRepository;
                 _paymentRepository = paymentRepository;
+                _paymentService = paymentService;
                 _mapper = mapper;
             }
 
@@ -59,7 +61,7 @@ namespace Application.Services
         /// </summary>
         /// <param name="bookingDto">The BookingDTO containing booking details.</param>
         /// <returns>The created BookingDTO</returns>
-        public async Task<BookingDTO?> CreateBookingAsync(BookingDTOForCreation bookingDto,Guid userGuid)
+        public async Task<BookingResultDTO?> CreateBookingAsync(BookingDTOForCreation bookingDto,Guid userGuid)
         {
             double? pricePerNight = await _roomRepository.GetRoomWithPriceAsync(bookingDto.RoomId);
             if (pricePerNight == null)
@@ -104,9 +106,17 @@ namespace Application.Services
                 Status = PaymentStatus.Pending
             };
 
+            var paymentOrder = _paymentService.CreateOrderAsync((decimal)price, "USD");
+
             await _paymentRepository.AddAsync(payment);
 
-            return _mapper.Map<BookingDTO>(createdBooking);
+           BookingResultDTO bookingResult= _mapper.Map<BookingResultDTO>(createdBooking);
+            bookingResult.ApproveLink=paymentOrder
+                                    .Result
+                                    .Links
+                                    .FirstOrDefault(x=>x.Rel=="approve").Href;
+
+            return bookingResult;
         }
 
      
