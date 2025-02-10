@@ -4,6 +4,7 @@ using Application.DTOs.BookingDTOs;
 using AutoMapper;
 using Infrastructure.Repository;
 using Domain.Enum;
+using Pay.Interfaces;
 
 namespace Application.Services
 {
@@ -12,6 +13,8 @@ namespace Application.Services
         private readonly BookingRepository _bookingRepository;
         private readonly RoomRepository _roomRepository;
         private readonly PaymentRepository _paymentRepository;
+        private readonly IPaymentService _paymentService;
+
         private readonly IMapper _mapper;
         public BookingServices(
             BookingRepository bookingRepository,

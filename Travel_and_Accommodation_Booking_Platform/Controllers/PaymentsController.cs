@@ -1,7 +1,7 @@
 ﻿using Application.DTOs.PaymentDTOs;
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using Payment.Interfaces;
+using Pay.Interfaces;
 
 namespace Presentation.Controllers
 {

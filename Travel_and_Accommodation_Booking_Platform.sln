@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{5E7E895C-E0F4-493E-AE1C-A109D7B2F548}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment", "PayPal\Payment.csproj", "{E03A7C32-E663-4C68-AC5F-E1C8E284D5F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Pay", "PayPal\Pay.csproj", "{E03A7C32-E663-4C68-AC5F-E1C8E284D5F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

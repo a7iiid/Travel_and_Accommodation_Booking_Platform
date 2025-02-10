@@ -1,6 +1,6 @@
 ﻿using Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
-using Payment.Interfaces;
+using Pay.Interfaces;
 using PayPalCheckoutSdk.Core;
 using PayPalCheckoutSdk.Orders;
 using PayPalHttp;

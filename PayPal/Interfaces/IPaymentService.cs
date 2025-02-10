@@ -1,7 +1,7 @@
 ﻿
 using PayPalCheckoutSdk.Orders;
 
-namespace Payment.Interfaces
+namespace Pay.Interfaces
 {
     public interface IPaymentService
     {

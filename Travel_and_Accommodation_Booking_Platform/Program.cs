@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Payment.Interfaces;
+using Pay.Interfaces;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
