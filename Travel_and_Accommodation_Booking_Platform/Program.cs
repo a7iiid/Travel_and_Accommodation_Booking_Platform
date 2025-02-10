@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Payment.Interfaces;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -113,11 +114,11 @@ services.AddScoped<IRepository<Booking>, BookingRepository>();
 services.AddScoped<BookingRepository>();
 services.AddScoped<BookingServices>();
 
-services.AddScoped<IRepository<Payment>, PaymentRepository>();
+services.AddScoped<IRepository<Domain.Entities.Payment>, PaymentRepository>();
 services.AddScoped<PaymentRepository>();
 
 builder.Services.AddScoped<PayPalService>();
-builder.Services.AddScoped<IPayPalService, PayPalService>();
+builder.Services.AddScoped<IPaymentService, PayPalService>();
 
 
 

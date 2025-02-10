@@ -1,7 +1,7 @@
 ﻿using Application.DTOs.PaymentDTOs;
 using Domain.Exceptions;
-using Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Payment.Interfaces;
 
 namespace Presentation.Controllers
 {
@@ -9,15 +9,15 @@ namespace Presentation.Controllers
     [Route("api/[controller]")]
     public class PaymentsController : ControllerBase
     {
-        private readonly IPayPalService _paymentService;
+        private readonly IPaymentService _paymentService;
 
-        public PaymentsController(IPayPalService paymentService)
+        public PaymentsController(IPaymentService paymentService)
         {
             _paymentService = paymentService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePayment([FromBody] PaymentRequestDto request)
+        public async Task<IActionResult> CreatePayment([FromBody] PaymentRequestDTO request)
         {
             try
             {

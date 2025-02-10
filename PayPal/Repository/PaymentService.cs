@@ -1,5 +1,6 @@
 ﻿using Domain.Exceptions;
 using Microsoft.Extensions.Configuration;
+using Payment.Interfaces;
 using PayPalCheckoutSdk.Core;
 using PayPalCheckoutSdk.Orders;
 using PayPalHttp;
@@ -7,7 +8,7 @@ using System.Net;
 
 
 
-public class PayPalService : IPayPalService
+public class PayPalService : IPaymentService
 {
     private readonly PayPalHttpClient _client;
     private readonly string _returnUrl;
