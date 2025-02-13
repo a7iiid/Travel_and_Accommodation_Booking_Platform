@@ -2,6 +2,7 @@
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
+using Pay.Interfaces;
 
 namespace Application.Services
 {
@@ -9,11 +10,13 @@ namespace Application.Services
     {
         private readonly PaymentRepository _paymentRepository;
         private readonly IMapper _mapper;
+        private readonly IPayment _payment;
 
-        public PaymentServices(PaymentRepository paymentRepository, IMapper mapper)
+        public PaymentServices(PaymentRepository paymentRepository, IMapper mapper,IPayment payment)
         {
             _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _payment = payment ?? throw new ArgumentNullException(nameof(payment));
         }
 
         /// <summary>
@@ -40,10 +43,13 @@ namespace Application.Services
         /// <summary>
         /// Adds a new payment.
         /// </summary>
-        public async Task AddPaymentAsync(PaymentDTO paymentDTO)
+        public async Task<string?> AddPaymentAsync(PaymentDTO paymentDTO)
         {
             var paymentEntity = _mapper.Map<Payment>(paymentDTO);
             await _paymentRepository.AddAsync(paymentEntity);
+            var payment = await _payment.CreateOrderAsync((decimal)paymentDTO.Amount,"USD");
+            string? ApprovUrl = payment.Links.FirstOrDefault(x => x.Rel == "approve")?.Href;
+            return ApprovUrl;
         }
 
         /// <summary>

@@ -1,10 +1,13 @@
 ﻿using Domain.Entities;
-using Domain.Interfaces;
 using Application.DTOs.BookingDTOs;
 using AutoMapper;
 using Infrastructure.Repository;
 using Domain.Enum;
-using Pay.Interfaces;
+using Domain.Exceptions;
+using Microsoft.EntityFrameworkCore;
+using Application.DTOs;
+using Application.DTOs.PaymentDTOs;
+using Infrastructure.DB;
 
 namespace Application.Services
 {
@@ -12,23 +15,23 @@ namespace Application.Services
     {
         private readonly BookingRepository _bookingRepository;
         private readonly RoomRepository _roomRepository;
-        private readonly PaymentRepository _paymentRepository;
-        private readonly IPaymentService _paymentService;
+        private readonly PaymentServices _paymentServices;
+        private readonly ApplicationDbContext _context;
 
         private readonly IMapper _mapper;
         public BookingServices(
             BookingRepository bookingRepository,
             RoomRepository roomRepository,
-            PaymentRepository paymentRepository,
-            IPaymentService paymentService,
-            IMapper mapper)
-            {
-                _bookingRepository = bookingRepository;
-                _roomRepository = roomRepository;
-                _paymentRepository = paymentRepository;
-                _paymentService = paymentService;
-                _mapper = mapper;
-            }
+            PaymentServices paymentServices,
+            IMapper mapper,
+            ApplicationDbContext context)
+        {
+            _bookingRepository = bookingRepository;
+            _roomRepository = roomRepository;
+            _paymentServices = paymentServices;
+            _mapper = mapper;
+            _context = context; 
+        }
 
         /// <summary>
         /// Gets all bookings.
@@ -37,7 +40,9 @@ namespace Application.Services
         public async Task<IReadOnlyList<Booking>> GetAllBookingsAsync()
         {
             var bookings = await _bookingRepository.GetAllAsync();
-            return bookings;
+            return bookings.Any()
+                ? bookings
+                : throw new NotFoundException("No bookings found");
         }
 
         /// <summary>
@@ -63,64 +68,76 @@ namespace Application.Services
         /// <returns>The created BookingDTO</returns>
         public async Task<BookingResultDTO?> CreateBookingAsync(BookingDTOForCreation bookingDto,Guid userGuid)
         {
-            double? pricePerNight = await _roomRepository.GetRoomWithPriceAsync(bookingDto.RoomId);
-            if (pricePerNight == null)
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
             {
-                throw new InvalidOperationException("Room not found");
-                
+
+                var price = CalculateTotalPrice(bookingDto);
+
+                // Create booking
+                var booking = new Booking
+                {
+                    RoomId = bookingDto.RoomId,
+                    UserId = userGuid,
+                    CheckInDate = bookingDto.CheckInDate,
+                    CheckOutDate = bookingDto.CheckOutDate,
+                    Price = await price,
+                    BookingDate = DateTime.UtcNow
+                };
+
+                // add booking
+                var createdBooking = await _bookingRepository.AddAsync(booking);
+                if (createdBooking == null)
+                {
+
+                    return null;
+
+                }
+
+                // Create payment
+                PaymentDTO payment = new PaymentDTO
+                {
+                    BookingId = createdBooking.Id,
+                    Amount = await price,
+                    Method = bookingDto.PaymentMethod,
+                    Status = PaymentStatus.Pending
+                };
+
+
+
+
+                BookingResultDTO bookingResult = _mapper.Map<BookingResultDTO>(createdBooking);
+                bookingResult.ApproveLink = await _paymentServices.AddPaymentAsync(payment);
+                await transaction.CommitAsync();
+
+                return bookingResult;
+
             }
-            int nights = CalculateNights(bookingDto);
+            catch(Exception ex)
+            {   
+                transaction.Rollback();
+                throw new InvalidOperationException("Failed to create booking");
 
-            var price = pricePerNight * nights;
-
-            // Create booking
-            var booking = new Booking
-            {
-                RoomId = bookingDto.RoomId,
-                UserId = userGuid,
-                CheckInDate = bookingDto.CheckInDate,
-                CheckOutDate = bookingDto.CheckOutDate,
-                Price = (double)price,
-                BookingDate = DateTime.UtcNow
-            };
-
-            // Check availability
-            if (!await _bookingRepository.CanBookRoom(
-                booking.RoomId,
-                booking.CheckInDate,
-                booking.CheckOutDate))
-            {
-                throw new InvalidOperationException("Room not available for selected dates");
             }
 
-            // Create booking
-            var createdBooking = await _bookingRepository.AddAsync(booking);
-            if (createdBooking == null) return null;
 
-            // Create payment
-            var payment = new Payment
-            {
-                BookingId = createdBooking.Id,
-                Amount = (double)price,
-                Method = bookingDto.PaymentMethod,
-                Status = PaymentStatus.Pending
-            };
-
-            var paymentOrder = _paymentService.CreateOrderAsync((decimal)price, "USD");
-
-            await _paymentRepository.AddAsync(payment);
-
-           BookingResultDTO bookingResult= _mapper.Map<BookingResultDTO>(createdBooking);
-            bookingResult.ApproveLink=paymentOrder
-                                    .Result
-                                    .Links
-                                    .FirstOrDefault(x=>x.Rel=="approve").Href;
-
-            return bookingResult;
         }
 
-     
 
+        private async Task<double> GetRoomPriceAsync(Guid roomId)
+        {
+            var pricePerNight = await _roomRepository.GetRoomWithPriceAsync(roomId);
+            return pricePerNight ?? throw new InvalidOperationException("Room not found");
+        }
+        private async Task <double> CalculateTotalPrice(BookingDTOForCreation bookingDto)
+        {
+            var nights = CalculateNights(bookingDto);
+            double? pricePerNight = await GetRoomPriceAsync(bookingDto.RoomId);
+           
+            var totalPrice = pricePerNight * nights;
+            return totalPrice??0;
+        }
         private static int CalculateNights(BookingDTOForCreation bookingDto)
         {
 

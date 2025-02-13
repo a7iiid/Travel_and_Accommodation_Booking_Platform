@@ -9,9 +9,9 @@ namespace Presentation.Controllers
     [Route("api/[controller]")]
     public class PaymentsController : ControllerBase
     {
-        private readonly IPaymentService _paymentService;
+        private readonly IPayment _paymentService;
 
-        public PaymentsController(IPaymentService paymentService)
+        public PaymentsController(IPayment paymentService)
         {
             _paymentService = paymentService;
         }

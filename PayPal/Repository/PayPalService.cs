@@ -8,7 +8,7 @@ using System.Net;
 
 
 
-public class PayPalService : IPaymentService
+public class PayPalService : IPayment
 {
     private readonly PayPalHttpClient _client;
     private readonly string _returnUrl;

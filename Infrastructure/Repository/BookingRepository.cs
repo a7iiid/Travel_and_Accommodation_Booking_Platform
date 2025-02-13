@@ -82,9 +82,15 @@ namespace Infrastructure.Repository
             if (!await CanBookRoom(
                     booking.RoomId,
                     booking.CheckInDate,
-                    booking.CheckOutDate)) return null;
+                    booking.CheckOutDate))
+            {
+                _logger.LogWarning("Room not available for selected dates");
+
+                return null;
+            }
 
             await base.AddAsync(booking);
+            _logger.LogInformation("Room not available for selected dates");
             return booking;
         }
 

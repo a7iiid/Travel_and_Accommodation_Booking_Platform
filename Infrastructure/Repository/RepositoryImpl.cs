@@ -52,6 +52,7 @@ namespace Infrastructure.Repository
             try
             {
                 await _context.Set<T>().AddAsync(entity);
+                log.LogInformation($"Entity {typeof(T)} added to the database");
                 await SaveChangesAsync();
             }
             catch (DbUpdateException ex)
@@ -94,6 +95,7 @@ namespace Infrastructure.Repository
                 var entity = await GetByIdAsync(id);
                
                 _context.Set<T>().Remove(entity);
+                log.LogInformation($"Entity {typeof(T)} deleted from the database");
                 await SaveChangesAsync();
                 return true;
             }

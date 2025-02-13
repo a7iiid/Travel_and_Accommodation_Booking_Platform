@@ -118,7 +118,7 @@ services.AddScoped<IRepository<Domain.Entities.Payment>, PaymentRepository>();
 services.AddScoped<PaymentRepository>();
 
 builder.Services.AddScoped<PayPalService>();
-builder.Services.AddScoped<IPaymentService, PayPalService>();
+builder.Services.AddScoped<IPayment, PayPalService>();
 
 
 
