@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using Application.@interface;
 using Application.profile;
 using Application.Services;
 using Domain.Entities;
@@ -115,8 +116,7 @@ services.AddScoped<IRepository<Booking>, BookingRepository>();
 services.AddScoped<BookingRepository>();
 services.AddScoped<BookingServices>();
 
-services.AddScoped<IRepository<Domain.Entities.Payment>, PaymentRepository>();
-services.AddScoped<PaymentRepository>();
+services.AddScoped<IPaymentServices, PaymentServices>();
 builder.Services.AddScoped<PaymentServices>();
 
 

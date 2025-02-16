@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.PaymentDTOs;
+using Application.@interface;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Repository;
