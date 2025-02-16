@@ -9,13 +9,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repository
 {
-    public class BookingRepository : Repository<Booking> 
+    public class BookingRepository : IBookingRepository 
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<BookingRepository> _logger;
 
         public BookingRepository(ApplicationDbContext context, ILogger<BookingRepository> logger)
-            : base(context, logger) 
+            
         {
             _context = context;
             _logger = logger;
@@ -34,7 +34,7 @@ namespace Infrastructure.Repository
                 proposedCheckOut.Date < booking.CheckInDate.Date);
         }
 
-        public override async Task<IReadOnlyList<Booking>> GetAllAsync()
+        public  async Task<IReadOnlyList<Booking>> GetAllAsync()
         {
             try
             {
@@ -51,7 +51,7 @@ namespace Infrastructure.Repository
             }
         }
 
-        public override async Task<Booking> GetByIdAsync(Guid id)
+        public  async Task<Booking> GetByIdAsync(Guid id)
         {
             try
             {
@@ -64,7 +64,7 @@ namespace Infrastructure.Repository
                             .FirstOrDefaultAsync(b => b.Id == id);
                 if (booking == null)
                 {
-                    log.LogError($"Booking  with ID {id} was not found.");
+                    _logger.LogError($"Booking  with ID {id} was not found.");
                     throw new NotFoundException($"Booking with ID {id} was not found.");
 
                 }
@@ -73,12 +73,12 @@ namespace Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                log.LogError($"Error fetching entity by ID: {ex.Message}");
+                _logger.LogError($"Error fetching entity by ID: {ex.Message}");
                 throw new DataAccessException("An error occurred while retrieving the booking.", ex);
             }
         }
 
-        public override async Task<Booking> AddAsync(Booking booking)
+        public  async Task<Booking> AddAsync(Booking booking)
         {
             if (!await CanBookRoom(booking.RoomId, booking.CheckInDate, booking.CheckOutDate))
             {
@@ -86,11 +86,68 @@ namespace Infrastructure.Repository
                 throw new BookingConflictException("Room is already booked for the selected dates.");
             }
 
-            await base.AddAsync(booking);
+            await _context.AddAsync(booking);
+            await SaveChangesAsync();
             return booking;
         }
+        public async Task SaveChangesAsync()
+        {
+            try
+            {
+                await _context.SaveChangesAsync();
+                _logger.LogInformation("saving changes");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error saving changes: {ex.Message}");
+                throw new DataAccessException("An error occurred while saving changes to the database.", ex);
+            }
+        }
+
+        public Task<bool> DeleteAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> IsExistsAsync(Guid id)
+        {
+            try
+            {
+                return await _context
+                            .Bookings
+                            .AnyAsync
+                            (booking => booking.Id.Equals(id));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error checking existence of Booking: {ex.Message}");
+                throw new DataAccessException("An error occurred while checking the existence of the entity.", ex);
+            }
+        }
+
+        public async Task UpdateAsync(Booking booking, Guid id)
+        {
+            try
+            {
+                if (booking == null)
+                    throw new ArgumentNullException(nameof(booking), "Entity cannot be null.");
+
+                var existingEntity = await GetByIdAsync(id);
 
 
+
+
+                _context.Entry(existingEntity).CurrentValues.SetValues(booking);
+
+                await SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error updating Booking: {ex.Message}");
+                throw new DataAccessException("An error occurred while updating the entity.", ex);
+            }
+        }
 
     }
 }

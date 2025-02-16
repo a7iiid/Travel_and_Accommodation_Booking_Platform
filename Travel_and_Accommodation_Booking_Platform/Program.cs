@@ -112,7 +112,7 @@ services.AddScoped<HotelServices>();
 services.AddScoped<IRepository<Room>, RoomRepository>();
 services.AddScoped<RoomRepository>();
 
-services.AddScoped<IRepository<Booking>, BookingRepository>();
+services.AddScoped<IBookingRepository, BookingRepository>();
 services.AddScoped<BookingRepository>();
 services.AddScoped<BookingServices>();
 
