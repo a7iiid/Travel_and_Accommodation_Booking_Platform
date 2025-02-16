@@ -4,11 +4,8 @@ using AutoMapper;
 using Infrastructure.Repository;
 using Domain.Enum;
 using Domain.Exceptions;
-using Microsoft.EntityFrameworkCore;
-using Application.DTOs;
 using Application.DTOs.PaymentDTOs;
 using Infrastructure.DB;
-using Application.DTOs.UserDTOs;
 
 namespace Application.Services
 {
