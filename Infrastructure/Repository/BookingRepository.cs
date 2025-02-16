@@ -51,11 +51,11 @@ namespace Infrastructure.Repository
             }
         }
 
-        public override Task<Booking> GetByIdAsync(Guid id)
+        public override async Task<Booking> GetByIdAsync(Guid id)
         {
             try
             {
-                var booking = _context.Bookings
+                var booking =await _context.Bookings
                             .Include(b=> b.Review)
                             .Include(b=>b.Payment)
                             .Include(b=>b.Room)
@@ -78,23 +78,19 @@ namespace Infrastructure.Repository
             }
         }
 
-        public override async Task<Booking?> AddAsync(Booking booking)
+        public override async Task<Booking> AddAsync(Booking booking)
         {
-            if (!await CanBookRoom(
-                    booking.RoomId,
-                    booking.CheckInDate,
-                    booking.CheckOutDate))
+            if (!await CanBookRoom(booking.RoomId, booking.CheckInDate, booking.CheckOutDate))
             {
                 _logger.LogWarning("Room not available for selected dates");
-
-                return null;
+                throw new BookingConflictException("Room is already booked for the selected dates.");
             }
 
             await base.AddAsync(booking);
-          
             return booking;
         }
 
-       
+
+
     }
 }

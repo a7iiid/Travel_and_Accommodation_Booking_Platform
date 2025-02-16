@@ -2,6 +2,7 @@
 
 using Domain.Entities;
 using Domain.Exceptions;
+using Domain.Interfaces;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -21,16 +22,7 @@ namespace Infrastructure.Repository
                 _logger = logger;
             }
 
-            public async Task<Guid> GetGuestIdByEmailAsync(string email)
-            {
-                return (await _context
-                    .Users
-                    .Where
-                    (user => user
-                        .Email
-                        .Equals(email))
-                    .SingleAsync()).Id;
-            }
+            
             public override async Task AddAsync(User user)
             {
                 try
@@ -63,23 +55,7 @@ namespace Infrastructure.Repository
                     .ToListAsync();
             }
 
-            public async Task<List<Hotel>> GetRecentlyVisitedHotelsForAuthenticatedGuestAsync(string email, int count)
-            {
-                var guestId = await GetGuestIdByEmailAsync(email);
-                return await GetRecentlyVisitedHotelsForGuestAsync(guestId, count);
-            }
-
-            public async Task<List<Booking>> GetBookingsForAuthenticatedGuestAsync(string email, int count)
-            {
-                var guestId = await GetGuestIdByEmailAsync(email);
-                return await (from booking in _context.Bookings
-                              where booking.UserId == guestId
-                              orderby booking.CheckInDate descending
-                              select booking)
-                    .Take(count)
-                    .ToListAsync();
-            }
-
+          
 
         }
 
