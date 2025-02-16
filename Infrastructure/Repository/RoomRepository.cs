@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Interfaces;
 using Domain.Model;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
@@ -7,13 +8,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repository
 {
-    public class RoomRepository:Repository<Room>
+    public class RoomRepository : Repository<Room>, IRoomRepository
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<RoomRepository> _logger;
 
         public RoomRepository(ApplicationDbContext context, ILogger<RoomRepository> logger)
-            :base(context,logger)
+            : base(context, logger)
         {
             _context = context;
             _logger = logger;
