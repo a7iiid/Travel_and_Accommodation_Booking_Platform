@@ -5,6 +5,7 @@ using Domain.Model;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Xml.Linq;
 
 
 namespace Infrastructure.Repository
@@ -78,7 +79,7 @@ namespace Infrastructure.Repository
             }
         }
 
-        public  async Task<Booking> AddAsync(Booking booking)
+        public  async Task<Booking> InsertAsync(Booking booking)
         {
             if (!await CanBookRoom(booking.RoomId, booking.CheckInDate, booking.CheckOutDate))
             {
@@ -105,9 +106,28 @@ namespace Infrastructure.Repository
             }
         }
 
-        public Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+
+            try
+            {
+                var entity = await GetByIdAsync(id);
+
+                _context.Bookings.Remove(entity);
+                _logger.LogInformation($"Booking deleted from the database");
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogWarning(ex.Message);
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error deleting entity: {ex.Message}");
+                throw new DataAccessException("An error occurred while deleting the entity.", ex);
+            }
         }
 
         public async Task<bool> IsExistsAsync(Guid id)

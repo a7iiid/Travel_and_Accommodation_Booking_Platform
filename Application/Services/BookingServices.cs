@@ -86,7 +86,7 @@ namespace Application.Services
                 };
 
                 // add booking
-                var createdBooking = await _bookingRepository.AddAsync(booking);
+                var createdBooking = await _bookingRepository.InsertAsync(booking);
                 if (createdBooking == null)
                 {
 

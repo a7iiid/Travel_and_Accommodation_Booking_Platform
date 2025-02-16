@@ -101,7 +101,7 @@ services.AddScoped<IRepository<User>, UserRepository>();
 services.AddScoped<IAuthUser, AuthUser>();
 services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 services.AddScoped<UserService>();
-services.AddScoped<IRepository<City>, CityRepository>();
+services.AddScoped<ICityRepository, CityRepository>();
 services.AddScoped<CityServices>();
 
 services.AddScoped<IRepository<Hotel>, HotelRepository>();
