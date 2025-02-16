@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Application.DTOs;
 using Application.DTOs.PaymentDTOs;
 using Infrastructure.DB;
+using Application.DTOs.UserDTOs;
 
 namespace Application.Services
 {
@@ -50,15 +51,15 @@ namespace Application.Services
         /// </summary>
         /// <param name="bookingId">The ID of the booking.</param>
         /// <returns>A Booking</returns>
-        public async Task<Booking?> GetBookingByIdAsync(Guid bookingId)
+        public async Task<BookingByIdDTO?> GetBookingByIdAsync(Guid bookingId)
         {
             var booking = await _bookingRepository.GetByIdAsync(bookingId);
             if (booking == null)
             {
                 return null;
             }
-            
-            return booking;
+            var bookingDto = _mapper.Map<BookingByIdDTO>(booking);
+            return bookingDto;
         }
 
         /// <summary>
@@ -153,7 +154,7 @@ namespace Application.Services
         /// <param name="bookingId">The ID of the booking to update.</param>
         /// <param name="updatedBookingDto">The updated BookingDTO.</param>
         /// <returns>True if the update was successful, false otherwise.</returns>
-        public async Task<bool> UpdateBookingAsync(Guid bookingId, BookingDTO updatedBookingDto)
+        public async Task<bool> UpdateBookingAsync(Guid bookingId, BookingForUpdateDTO updatedBookingDto)
         {
             var existingBooking = await _bookingRepository.GetByIdAsync(bookingId);
             if (existingBooking == null)
@@ -161,10 +162,11 @@ namespace Application.Services
                 throw new KeyNotFoundException($"Booking with ID {bookingId} was not found.");
             }
 
-            // Update entity fields
-            var updatedBooking = _mapper.Map<Booking>(updatedBookingDto);
-            await _bookingRepository.UpdateAsync(updatedBooking, bookingId);
+            _mapper.Map(updatedBookingDto, existingBooking);
+
+            await _bookingRepository.UpdateAsync(existingBooking, bookingId);
             return true;
+
         }
 
         /// <summary>

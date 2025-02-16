@@ -46,9 +46,10 @@ namespace Application.Services
         public async Task<string?> AddPaymentAsync(PaymentDTO paymentDTO)
         {
             var paymentEntity = _mapper.Map<Payment>(paymentDTO);
-            await _paymentRepository.AddAsync(paymentEntity);
-            var payment = await _payment.CreateOrderAsync((decimal)paymentDTO.Amount,"USD");
+            var payment = await _payment.CreateOrderAsync((decimal)paymentDTO.Amount, "USD");
             string? ApprovUrl = payment.Links.FirstOrDefault(x => x.Rel == "approve")?.Href;
+            await _paymentRepository.AddAsync(paymentEntity);
+            
             return ApprovUrl;
         }
 

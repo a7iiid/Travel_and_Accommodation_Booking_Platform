@@ -132,9 +132,9 @@ namespace Infrastructure.Repository
                     throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
 
                 var existingEntity = await GetByIdAsync(id);
-                
 
-                    
+
+
 
                 _context.Entry(existingEntity).CurrentValues.SetValues(entity);
 

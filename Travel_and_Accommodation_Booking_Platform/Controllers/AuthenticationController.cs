@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Domain.Model;
 using Presentation.model;
-using Application.DTOs;
 using Application.Services;
 using Presentation.Validetors.AuthentcationValdetors;
+using Application.DTOs.UserDTOs;
 
 namespace Presentation.Controllers
 {

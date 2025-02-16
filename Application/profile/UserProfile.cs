@@ -1,4 +1,4 @@
-﻿using Application.DTOs;
+﻿using Application.DTOs.UserDTOs;
 using AutoMapper;
 using Domain.Entities;
 
@@ -9,6 +9,8 @@ namespace Application.profile
     {
         public UserProfile()
         {
+            CreateMap<User, UserWithOutBookingDTO>();
+
             CreateMap<UserRegisterDTO, User>()
                 .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.FirstName))
                 .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.LastName))

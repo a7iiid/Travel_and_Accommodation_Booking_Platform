@@ -1,5 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Exceptions;
+using Domain.Interfaces;
 using Domain.Model;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +10,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Infrastructure.Repository
 {
-    public class HotelRepository : Repository<Hotel>
+    public class HotelRepository : Repository<Hotel>, IHotelRepository
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<HotelRepository> _logger;
@@ -159,9 +160,9 @@ namespace Infrastructure.Repository
                    select room;
         }
         public async Task<PaginatedList<Hotel>> GetHotelsByOwnerIdAsync(
-     Guid ownerId,
-     int PageSize = 5,
-     int PageNumber = 1)
+                                                                     Guid ownerId,
+                                                                    int PageSize = 5,
+                                                                    int PageNumber = 1)
         {
             try
             {

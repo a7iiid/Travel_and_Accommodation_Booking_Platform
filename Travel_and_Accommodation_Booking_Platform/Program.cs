@@ -105,6 +105,7 @@ services.AddScoped<CityServices>();
 
 services.AddScoped<IRepository<Hotel>, HotelRepository>();
 services.AddScoped<HotelRepository>();
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 services.AddScoped<HotelServices>();
 
 services.AddScoped<IRepository<Room>, RoomRepository>();
@@ -116,6 +117,8 @@ services.AddScoped<BookingServices>();
 
 services.AddScoped<IRepository<Domain.Entities.Payment>, PaymentRepository>();
 services.AddScoped<PaymentRepository>();
+builder.Services.AddScoped<PaymentServices>();
+
 
 builder.Services.AddScoped<PayPalService>();
 builder.Services.AddScoped<IPayment, PayPalService>();

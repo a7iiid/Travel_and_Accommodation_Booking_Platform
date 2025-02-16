@@ -13,6 +13,6 @@ namespace Application.DTOs.HotelDTOs
         public string PhoneNumber { get; set; }
         public int FloorsNumber { get; set; }
         public Guid OwnerId { get; set; }
-        public CityDTOWithoutHotels City { get; set; }
+        public Guid CityId { get; set; }
     }
 }

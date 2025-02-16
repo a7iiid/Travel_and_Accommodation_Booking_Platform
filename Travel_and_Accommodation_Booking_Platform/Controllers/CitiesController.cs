@@ -3,11 +3,7 @@ using Application.Services;
 using Application.Validators;
 using Domain.Entities;
 using Domain.Model;
-using FluentValidation;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Presentation.model;
-using Presentation.Validetors.AuthentcationValdetors;
 using Presentation.Validetors.cityValidetors;
 
 namespace Presentation.Controllers

@@ -14,7 +14,7 @@ namespace Application.Validators
                 .NotEmpty().WithMessage("City name is required.")
                 .MaximumLength(100).WithMessage("City name must not exceed 100 characters.");
 
-            RuleFor(x => x.CountryName)
+            RuleFor(x => x.Country)
                 .NotEmpty().WithMessage("Country name is required.")
                 .MaximumLength(100).WithMessage("Country name must not exceed 100 characters.");
 

@@ -59,6 +59,7 @@ namespace Infrastructure.Repository
                             .Include(b=> b.Review)
                             .Include(b=>b.Payment)
                             .Include(b=>b.Room)
+                            .Include(b=>b.User)
                             
                             .FirstOrDefaultAsync(b => b.Id == id);
                 if (booking == null)
@@ -90,7 +91,7 @@ namespace Infrastructure.Repository
             }
 
             await base.AddAsync(booking);
-            _logger.LogInformation("Room not available for selected dates");
+          
             return booking;
         }
 

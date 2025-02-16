@@ -20,19 +20,22 @@ namespace Application.Services
 
         }
 
-        public async Task<PaginatedList<City>> GetCitiesWithHotelsAsync(
+        public async Task<PaginatedList<CityDTO>> GetCitiesWithHotelsAsync(
             string? searchQuery,
             int pageNumber,
             int pageSize)
         {
             if (pageNumber <= 0 || pageSize <= 0)
                 throw new ArgumentException("Page number and size must be greater than zero.");
+            PaginatedList < City > cities = await ((CityRepository)_cityRepository).GetAllAsync(
+                                                    true,
+                                                    searchQuery,
+                                                    pageNumber,
+                                                    pageSize);
+            var cityDto= _mapper.Map<List<CityDTO>>(cities.Items);
+            return new PaginatedList<CityDTO>(cityDto, cities.PageData);
 
-            return await ((CityRepository)_cityRepository).GetAllAsync(
-                true,
-                searchQuery,
-                pageNumber,
-                pageSize);
+            
         }
 
         public async Task<PaginatedList<CityDTOWithoutHotels>> GetCitiesWithOutHotelsAsync(

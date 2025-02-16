@@ -1,5 +1,6 @@
 ﻿
 
+using Application.DTOs.UserDTOs;
 using Domain.Entities;
 using Domain.Enum;
 
@@ -19,5 +20,8 @@ namespace Application.DTOs.BookingDTOs
         public Payment? Payment { get; set; }
         public Review? Review { get; set; }
         public Room Room { get; set; }
+        public UserWithOutBookingDTO User { get; set; }
+
+
     }
 }

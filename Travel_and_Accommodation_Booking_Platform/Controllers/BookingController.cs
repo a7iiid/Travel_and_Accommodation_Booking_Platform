@@ -5,6 +5,7 @@ using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Presentation.Validetors.BookingValdetors;
 using System.Security.Claims;
 
 namespace API.Controllers
@@ -85,10 +86,10 @@ namespace API.Controllers
         /// <param name="updatedBookingDto">Updated booking details</param>
         /// <returns>Updated booking</returns>
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateBooking(Guid id, [FromBody] BookingDTO updatedBookingDto)
+        public async Task<IActionResult> UpdateBooking(Guid id, [FromBody] BookingForUpdateDTO updatedBookingDto)
         {
             // Validate the DTO
-            var validator = new BookingDTOValidator();
+            var validator = new BookingForUpdateDTOValdetors();
             var validationResult = await validator.ValidateAsync(updatedBookingDto);
 
             if (!validationResult.IsValid)
@@ -98,7 +99,7 @@ namespace API.Controllers
             }
 
             // Get the current user's email
-            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            var userEmail = User.FindFirst("Email")?.Value;
             if (string.IsNullOrEmpty(userEmail))
                 return Unauthorized("User email not found.");
 
@@ -137,7 +138,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteBooking(Guid id)
         {
             // Get the current user's email
-            var userEmail = User.FindFirst(ClaimTypes.Email)?.Value;
+            var userEmail = User.FindFirst("Email")?.Value;
             if (string.IsNullOrEmpty(userEmail))
                 return Unauthorized("User email not found.");
 
