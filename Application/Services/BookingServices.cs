@@ -6,6 +6,7 @@ using Domain.Enum;
 using Domain.Exceptions;
 using Application.DTOs.PaymentDTOs;
 using Infrastructure.DB;
+using Application.@interface;
 
 namespace Application.Services
 {
@@ -13,14 +14,14 @@ namespace Application.Services
     {
         private readonly BookingRepository _bookingRepository;
         private readonly RoomRepository _roomRepository;
-        private readonly PaymentServices _paymentServices;
+        private readonly IPaymentServices _paymentServices;
         private readonly ApplicationDbContext _context;
 
         private readonly IMapper _mapper;
         public BookingServices(
             BookingRepository bookingRepository,
             RoomRepository roomRepository,
-            PaymentServices paymentServices,
+            IPaymentServices paymentServices,
             IMapper mapper,
             ApplicationDbContext context)
         {

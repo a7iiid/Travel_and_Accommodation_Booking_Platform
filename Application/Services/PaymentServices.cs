@@ -6,13 +6,13 @@ using Pay.Interfaces;
 
 namespace Application.Services
 {
-    public class PaymentServices
+    public class PaymentServices: IPaymentServices
     {
-        private readonly PaymentRepository _paymentRepository;
+        private readonly Repository<Payment> _paymentRepository;
         private readonly IMapper _mapper;
         private readonly IPayment _payment;
 
-        public PaymentServices(PaymentRepository paymentRepository, IMapper mapper,IPayment payment)
+        public PaymentServices(Repository<Payment> paymentRepository, IMapper mapper,IPayment payment)
         {
             _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
