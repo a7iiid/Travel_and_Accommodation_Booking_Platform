@@ -15,8 +15,8 @@ namespace TABPTesting
 {
     public class BookingServicesTests
     {
-        private readonly Mock<BookingRepository> _mockBookingRepository;
-        private readonly Mock<RoomRepository> _mockRoomRepository;
+        private readonly Mock<IBookingRepository> _mockBookingRepository;
+        private readonly Mock<IRoomRepository> _mockRoomRepository;
         private readonly Mock<IPaymentRepository> _mockPaymentServices;
         private readonly Mock<IMapper> _mockMapper;
         private readonly DbContextOptions<ApplicationDbContext> _dbContextOptions;
@@ -25,8 +25,8 @@ namespace TABPTesting
         public BookingServicesTests()
         {
             // Mock dependencies
-            _mockBookingRepository = new Mock<BookingRepository>(MockBehavior.Strict, null, null);
-            _mockRoomRepository = new Mock<RoomRepository>(MockBehavior.Strict, null, null);
+            _mockBookingRepository = new Mock<IBookingRepository>();
+            _mockRoomRepository = new Mock<IRoomRepository>();
             _mockPaymentServices = new Mock<IPaymentRepository>();
             _mockMapper = new Mock<IMapper>();
 
@@ -45,28 +45,23 @@ namespace TABPTesting
             );
         }
 
+       
         [Fact]
         public async Task GetAllBookingsAsync_ReturnsBookings_WhenBookingsExist()
         {
             // Arrange
-            var bookings = new List<Booking>
-        {
-            new Booking { Id = Guid.NewGuid(), RoomId = Guid.NewGuid(), UserId = Guid.NewGuid() },
-            new Booking { Id = Guid.NewGuid(), RoomId = Guid.NewGuid(), UserId = Guid.NewGuid() }
-        };
-
+            var bookings = new List<Booking> { new Booking(), new Booking() };
             _mockBookingRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(bookings);
 
             // Act
             var result = await _bookingServices.GetAllBookingsAsync();
 
             // Assert
-            Assert.NotNull(result);
             Assert.Equal(2, result.Count);
         }
 
         [Fact]
-        public async Task GetAllBookingsAsync_ThrowsNotFoundException_WhenNoBookingsExist()
+        public async Task GetAllBookingsAsync_ThrowsNotFoundException_WhenNoBookings()
         {
             // Arrange
             _mockBookingRepository.Setup(repo => repo.GetAllAsync()).ReturnsAsync(new List<Booking>());
