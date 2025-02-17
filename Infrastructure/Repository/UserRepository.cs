@@ -22,26 +22,7 @@ namespace Infrastructure.Repository
             }
 
             
-            public async Task InsertAsync(User user)
-            {
-                try
-                {
-                    await _context.Users.AddAsync(user);
-                    await SaveChangesAsync();
-                }
-                catch (DbUpdateException e)
-                {
-                    if (e.InnerException != null && e.InnerException.Message.Contains("Role"))
-                    {
-                    _logger.LogError("User already exists in the system.");
-                        throw new UserAlreadyExistsException("User already exists in the system.");
-                    }
-                _logger.LogError("Error Adding User. Check for a violation of User attributes.");
-
-                throw new DataConstraintViolationException("Error Adding User. Check for a violation of User attributes.");
-                }
-            }
-
+            
             public async Task<List<User>> GetRecentlyVisitedUsersForGuestAsync(Guid guestId, int count)
             {
                 return await (from User in _context.Users
@@ -54,6 +35,25 @@ namespace Infrastructure.Repository
                     .ToListAsync();
             }
 
+        public async Task InsertAsync(User user)
+        {
+            try
+            {
+                await _context.Users.AddAsync(user);
+                await SaveChangesAsync();
+            }
+            catch (DbUpdateException e)
+            {
+                if (e.InnerException != null && e.InnerException.Message.Contains("Role"))
+                {
+                    _logger.LogError("User already exists in the system.");
+                    throw new UserAlreadyExistsException("User already exists in the system.");
+                }
+                _logger.LogError("Error Adding User. Check for a violation of User attributes.");
+
+                throw new DataConstraintViolationException("Error Adding User. Check for a violation of User attributes.");
+            }
+        }
 
         public async Task<User> GetByIdAsync(Guid id)
         {
