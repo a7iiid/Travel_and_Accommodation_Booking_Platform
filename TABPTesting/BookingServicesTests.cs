@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;
 
+
 public class BookingServicesTests
 {
     private readonly Mock<IBookingRepository> _mockBookingRepo;
@@ -128,6 +129,34 @@ public class BookingServicesTests
         // Act & Assert
         await Assert.ThrowsAsync<KeyNotFoundException>(
             () => _bookingServices.UpdateBookingAsync(bookingId, new BookingForUpdateDTO())
+        );
+    }
+
+    [Fact]
+    public async Task DeleteBookingAsync_ReturnsTrue_WhenBookingExists()
+    {
+        // Arrange
+        var bookingId = Guid.NewGuid();
+        _mockBookingRepo.Setup(repo => repo.IsExistsAsync(bookingId)).ReturnsAsync(true);
+        _mockBookingRepo.Setup(repo => repo.DeleteAsync(bookingId)).ReturnsAsync(true);
+
+        // Act
+        var result = await _bookingServices.DeleteBookingAsync(bookingId);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task DeleteBookingAsync_ThrowsKeyNotFoundException_WhenBookingDoesNotExist()
+    {
+        // Arrange
+        var bookingId = Guid.NewGuid();
+        _mockBookingRepo.Setup(repo => repo.IsExistsAsync(bookingId)).ReturnsAsync(false);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(
+            () => _bookingServices.DeleteBookingAsync(bookingId)
         );
     }
 
