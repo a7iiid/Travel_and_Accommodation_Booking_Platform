@@ -14,14 +14,14 @@ namespace Application.Services
     {
         private readonly BookingRepository _bookingRepository;
         private readonly RoomRepository _roomRepository;
-        private readonly IPaymentServices _paymentServices;
+        private readonly IPaymentRepository _paymentServices;
         private readonly ApplicationDbContext _context;
 
         private readonly IMapper _mapper;
         public BookingServices(
             BookingRepository bookingRepository,
             RoomRepository roomRepository,
-            IPaymentServices paymentServices,
+            IPaymentRepository paymentServices,
             IMapper mapper,
             ApplicationDbContext context)
         {

@@ -18,7 +18,7 @@ namespace TABPTesting
     {
         private readonly Mock<BookingRepository> _mockBookingRepository;
         private readonly Mock<RoomRepository> _mockRoomRepository;
-        private readonly Mock<IPaymentServices> _mockPaymentServices;
+        private readonly Mock<IPaymentRepository> _mockPaymentServices;
         private readonly Mock<IMapper> _mockMapper;
         private readonly DbContextOptions<ApplicationDbContext> _dbContextOptions;
         private readonly BookingServices _bookingServices;
@@ -28,7 +28,7 @@ namespace TABPTesting
             // Mock dependencies
             _mockBookingRepository = new Mock<BookingRepository>(MockBehavior.Strict, null, null);
             _mockRoomRepository = new Mock<RoomRepository>(MockBehavior.Strict, null, null);
-            _mockPaymentServices = new Mock<IPaymentServices>();
+            _mockPaymentServices = new Mock<IPaymentRepository>();
             _mockMapper = new Mock<IMapper>();
 
             // Configure in-memory database for testing

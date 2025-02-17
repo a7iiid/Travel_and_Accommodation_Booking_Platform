@@ -100,27 +100,19 @@ services.AddScoped<IPasswordHasher, PasswordHasher>();
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IAuthUser, AuthUser>();
 services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
-services.AddScoped<UserService>();
 services.AddScoped<ICityRepository, CityRepository>();
-services.AddScoped<CityServices>();
 services.AddScoped<IRoomAmenityRepository, RoomAmenityRepository>();
 
 services.AddScoped<IHotelRepository, HotelRepository>();
-services.AddScoped<HotelRepository>();
-services.AddScoped<HotelServices>();
+
 
 services.AddScoped<IRoomRepository, RoomRepository>();
-services.AddScoped<RoomRepository>();
-
+services.AddScoped<IRoomTypeRepository, RoomTypeRepository>();
 services.AddScoped<IBookingRepository, BookingRepository>();
-services.AddScoped<BookingRepository>();
-services.AddScoped<BookingServices>();
 
-services.AddScoped<IPaymentServices, PaymentServices>();
-builder.Services.AddScoped<PaymentServices>();
+services.AddScoped<IPaymentRepository, PaymentServices>();
 
 
-builder.Services.AddScoped<PayPalService>();
 builder.Services.AddScoped<IPayment, PayPalService>();
 
 

@@ -7,7 +7,7 @@ using Pay.Interfaces;
 
 namespace Application.Services
 {
-    public class PaymentServices: IPaymentServices
+    public class PaymentServices: IPaymentRepository
     {
         private readonly Repository<Payment> _paymentRepository;
         private readonly IMapper _mapper;
