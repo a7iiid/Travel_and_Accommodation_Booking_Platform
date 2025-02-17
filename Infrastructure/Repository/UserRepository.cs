@@ -9,31 +9,32 @@ using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repository
 {
-    
-        public class UserRepository : IUserRepository
+   
+
+    public class UserRepository : IUserRepository
+    {
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<UserRepository> _logger;
+
+        public UserRepository(ApplicationDbContext context, ILogger<UserRepository> logger)
         {
-            private readonly ApplicationDbContext _context;
-            private readonly ILogger<UserRepository> _logger;
+            _context = context;
+            _logger = logger;
+        }
 
-            public UserRepository(ApplicationDbContext context, ILogger<UserRepository> logger)
-            {
-                _context = context;
-                _logger = logger;
-            }
 
-            
-            
-            public async Task<List<User>> GetRecentlyVisitedUsersForGuestAsync(Guid guestId, int count)
-            {
-                return await (from User in _context.Users
-                              join room in _context.Rooms on User.RoomId equals room.Id
-                              join roomType in _context.RoomTypes on room.RoomTypeId equals roomType.Id
-                              join User in _context.Users on roomType.UserId equals User.Id
-                              where User.UserId == guestId
-                              orderby User.CheckInDate descending
-                              select User).Distinct().Take(count)
-                    .ToListAsync();
-            }
+
+        public async Task<List<Hotel>> GetRecentlyVisitedUsersForGuestAsync(Guid guestId, int count)
+        {
+            return await (from booking in _context.Bookings
+                          join room in _context.Rooms on booking.RoomId equals room.Id
+                          join roomType in _context.RoomTypes on room.RoomTypeId equals roomType.Id
+                          join hotel in _context.Hotels on roomType.HotelId equals hotel.Id
+                          where booking.UserId == guestId
+                          orderby booking.CheckInDate descending
+                          select hotel).Distinct().Take(count)
+       .ToListAsync();
+        }
 
         public async Task InsertAsync(User user)
         {
@@ -75,7 +76,7 @@ namespace Infrastructure.Repository
             }
         }
 
-        
+
 
         public async Task<bool> DeleteAsync(Guid id)
         {

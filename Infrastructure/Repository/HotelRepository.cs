@@ -59,7 +59,7 @@ namespace Infrastructure.Repository
         private bool IsRoomAvailable(Guid roomId, DateTime checkInDate, DateTime checkOutDate)
         {
             var roomHotels = _context
-                .Hotels
+                .Bookings
                 .Where(b => b.RoomId.Equals(roomId))
                 .ToList();
 
@@ -155,7 +155,7 @@ namespace Infrastructure.Repository
             return from room in _context.Rooms
                    where room.AdultsCapacity == adults &&
                           room.ChildrenCapacity==children &&
-                         _context.Hotels.Where(Hotel => Hotel.RoomId == room.Id).All
+                         _context.Bookings.Where(Booking => Booking.RoomId == room.Id).All
                          (Hotel => checkInDate.Date > Hotel.CheckOutDate.Date ||
                          checkOutDate.Date < Hotel.CheckInDate.Date)
                    select room;

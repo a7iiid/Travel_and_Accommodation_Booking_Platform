@@ -97,12 +97,13 @@ services.AddAuthorization(options =>
     }));
 
 services.AddScoped<IPasswordHasher, PasswordHasher>();
-services.AddScoped<IRepository<User>, UserRepository>();
+services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IAuthUser, AuthUser>();
 services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 services.AddScoped<UserService>();
 services.AddScoped<ICityRepository, CityRepository>();
 services.AddScoped<CityServices>();
+services.AddScoped<IRoomAmenityRepository, RoomAmenityRepository>();
 
 services.AddScoped<IHotelRepository, HotelRepository>();
 services.AddScoped<HotelRepository>();
