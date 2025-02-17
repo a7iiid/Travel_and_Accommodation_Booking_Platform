@@ -58,14 +58,14 @@ namespace Infrastructure.Repository
         }
         private bool IsRoomAvailable(Guid roomId, DateTime checkInDate, DateTime checkOutDate)
         {
-            var roomBookings = _context
-                .Bookings
+            var roomHotels = _context
+                .Hotels
                 .Where(b => b.RoomId.Equals(roomId))
                 .ToList();
 
-            return roomBookings.All(booking =>
-                checkInDate.Date > booking.CheckOutDate.Date ||
-                checkOutDate.Date < booking.CheckInDate.Date);
+            return roomHotels.All(Hotel =>
+                checkInDate.Date > Hotel.CheckOutDate.Date ||
+                checkOutDate.Date < Hotel.CheckInDate.Date);
         }
         public async Task<List<Room>> GetHotelAvailableRoomsAsync(
             Guid hotelId,
@@ -155,9 +155,9 @@ namespace Infrastructure.Repository
             return from room in _context.Rooms
                    where room.AdultsCapacity == adults &&
                           room.ChildrenCapacity==children &&
-                         _context.Bookings.Where(booking => booking.RoomId == room.Id).All
-                         (booking => checkInDate.Date > booking.CheckOutDate.Date ||
-                         checkOutDate.Date < booking.CheckInDate.Date)
+                         _context.Hotels.Where(Hotel => Hotel.RoomId == room.Id).All
+                         (Hotel => checkInDate.Date > Hotel.CheckOutDate.Date ||
+                         checkOutDate.Date < Hotel.CheckInDate.Date)
                    select room;
         }
         public async Task<PaginatedList<Hotel>> GetHotelsByOwnerIdAsync(
@@ -289,7 +289,7 @@ namespace Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error updating Booking: {ex.Message}");
+                _logger.LogError($"Error updating Hotel: {ex.Message}");
                 throw new DataAccessException("An error occurred while updating the entity.", ex);
             }
         }
