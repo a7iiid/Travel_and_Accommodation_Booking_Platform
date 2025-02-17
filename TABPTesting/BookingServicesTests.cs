@@ -100,5 +100,37 @@ public class BookingServicesTests
         Assert.Null(result);
     }
 
+    [Fact]
+    public async Task UpdateBookingAsync_ReturnsTrue_WhenBookingExists()
+    {
+        // Arrange
+        var bookingId = Guid.NewGuid();
+        var existingBooking = new Booking { Id = bookingId };
+        var updateDto = new BookingForUpdateDTO { CheckInDate = DateTime.UtcNow };
+
+        _mockBookingRepo.Setup(repo => repo.GetByIdAsync(bookingId)).ReturnsAsync(existingBooking);
+        _mockBookingRepo.Setup(repo => repo.UpdateAsync(existingBooking, bookingId)).Returns(Task.CompletedTask);
+
+        // Act
+        var result = await _bookingServices.UpdateBookingAsync(bookingId, updateDto);
+
+        // Assert
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task UpdateBookingAsync_ThrowsKeyNotFoundException_WhenBookingMissing()
+    {
+        // Arrange
+        var bookingId = Guid.NewGuid();
+        _mockBookingRepo.Setup(repo => repo.GetByIdAsync(bookingId)).ReturnsAsync((Booking)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<KeyNotFoundException>(
+            () => _bookingServices.UpdateBookingAsync(bookingId, new BookingForUpdateDTO())
+        );
+    }
+
+
 
 }
