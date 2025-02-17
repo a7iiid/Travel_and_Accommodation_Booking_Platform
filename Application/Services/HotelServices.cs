@@ -60,7 +60,7 @@ namespace Application.Services
         {
 
             var hotelEntity = _mapper.Map<Hotel>(hotelDTO);
-            await _customHotelRepository.AddAsync(hotelEntity);
+            await _customHotelRepository.InsertAsync(hotelEntity);
         }
 
         public async Task UpdateHotelAsync(Guid id, HotelDTO hotelDTO)

@@ -104,9 +104,8 @@ services.AddScoped<UserService>();
 services.AddScoped<ICityRepository, CityRepository>();
 services.AddScoped<CityServices>();
 
-services.AddScoped<IRepository<Hotel>, HotelRepository>();
+services.AddScoped<IHotelRepository, HotelRepository>();
 services.AddScoped<HotelRepository>();
-builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 services.AddScoped<HotelServices>();
 
 services.AddScoped<IRepository<Room>, RoomRepository>();
