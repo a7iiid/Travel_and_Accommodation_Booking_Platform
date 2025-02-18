@@ -197,5 +197,18 @@ namespace TABPTesting
                 () => _cityServices.UpdateCityAsync(null, Guid.NewGuid()));
         }
 
+        [Fact]
+        public async Task UpdateCityAsync_WhenCityNotExists()
+        {
+            // Arrange
+            var dto = new CityDTO();
+            _mockCityRepo.Setup(r => r.GetByIdAsync(It.IsAny<Guid>(), false))
+                .ReturnsAsync((City)null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(
+                () => _cityServices.UpdateCityAsync(dto, Guid.NewGuid()));
+        }
+
     }
 }
