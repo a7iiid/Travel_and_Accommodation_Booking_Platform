@@ -139,5 +139,19 @@ namespace TABPTesting
             // Assert
             Assert.Equal(cityId, result.Id);
         }
+
+        [Fact]
+        public async Task GetCityByIdAsync_ThrowsKeyNotFoundException_WhenNotExists()
+        {
+            // Arrange
+            var cityId = Guid.NewGuid();
+            _mockCityRepo.Setup(r => r.GetByIdAsync(cityId, It.IsAny<bool>()))
+                .ReturnsAsync((City)null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(
+                () => _cityServices.GetCityByIdAsync(cityId));
+        }
+
     }
 }
