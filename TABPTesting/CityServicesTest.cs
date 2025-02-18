@@ -123,5 +123,21 @@ namespace TABPTesting
             // Assert
             Assert.Equal(2, result.Items.Count);
         }
+
+        [Fact]
+        public async Task GetCityByIdAsync_ReturnsCity_WhenExists()
+        {
+            // Arrange
+            var cityId = Guid.NewGuid();
+            var city = new City { Id = cityId };
+            _mockCityRepo.Setup(r => r.GetByIdAsync(cityId, true))
+                .ReturnsAsync(city);
+
+            // Act
+            var result = await _cityServices.GetCityByIdAsync(cityId, true);
+
+            // Assert
+            Assert.Equal(cityId, result.Id);
+        }
     }
 }
