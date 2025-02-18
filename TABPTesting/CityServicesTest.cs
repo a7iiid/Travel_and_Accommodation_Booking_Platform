@@ -3,6 +3,7 @@ using Application.DTOs.CityDTOs;
 using Application.Services;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
 using Infrastructure.DB;
@@ -73,6 +74,32 @@ namespace TABPTesting
             Assert.NotNull(result);
             Assert.Equal(2, result.Items.Count);
             Assert.Equal(pageNumber, result.PageData.CurrentPage);
+        }
+        [Fact]
+        public async Task GetCitiesWithHotelsAsync_ThrowsNotFoundException_WhenNoCities()
+        {
+            // Arrange
+            const string searchQuery = "s";
+            const int pageNumber = 1;
+            const int pageSize = 5;
+
+            var pageData = new PageData(
+                totalItemCount: 0,
+                pageSize: pageSize,
+                currentPage: pageNumber
+            );
+
+            var cities = new List<City>(); // Empty list
+            var paginatedCities = new PaginatedList<City>(cities, pageData);
+
+            _cityRepository.Setup(repo =>
+                repo.GetAllAsync(true, searchQuery, pageNumber, pageSize)
+            ).ReturnsAsync(paginatedCities);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<NotFoundException>(() =>
+                _cityServices.GetCitiesWithHotelsAsync(searchQuery, pageNumber, pageSize)
+            );
         }
     }
 }

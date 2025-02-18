@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.CityDTOs;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
 using Infrastructure.Repository;
@@ -20,22 +21,25 @@ namespace Application.Services
 
         }
 
-        public async Task<PaginatedList<CityDTO>> GetCitiesWithHotelsAsync(
-            string? searchQuery,
-            int pageNumber,
-            int pageSize)
+        public async Task<PaginatedList<CityDTO>> GetCitiesWithHotelsAsync(string? searchQuery,int pageNumber,int pageSize)
         {
             if (pageNumber <= 0 || pageSize <= 0)
                 throw new ArgumentException("Page number and size must be greater than zero.");
-            PaginatedList < City > cities = await _cityRepository.GetAllAsync(
-                                                    true,
-                                                    searchQuery,
-                                                    pageNumber,
-                                                    pageSize);
-            var cityDto= _mapper.Map<List<CityDTO>>(cities.Items);
-            return new PaginatedList<CityDTO>(cityDto, cities.PageData);
 
-            
+            PaginatedList<City> cities = await _cityRepository.GetAllAsync(
+                includeHotels: true,
+                searchQuery: searchQuery,
+                pageNumber: pageNumber,
+                pageSize: pageSize
+            );
+
+            if (cities.Items == null || !cities.Items.Any())
+            {
+                throw new NotFoundException("No cities found.");
+            }
+
+            var cityDto = _mapper.Map<List<CityDTO>>(cities.Items);
+            return new PaginatedList<CityDTO>(cityDto, cities.PageData);
         }
 
         public async Task<PaginatedList<CityDTOWithoutHotels>> GetCitiesWithOutHotelsAsync(
