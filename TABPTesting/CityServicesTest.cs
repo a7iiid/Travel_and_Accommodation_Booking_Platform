@@ -210,5 +210,20 @@ namespace TABPTesting
                 () => _cityServices.UpdateCityAsync(dto, Guid.NewGuid()));
         }
 
+        [Fact]
+        public async Task DeleteCityAsync_WhenSuccess()
+        {
+            // Arrange
+            var cityId = Guid.NewGuid();
+            _mockCityRepo.Setup(r => r.DeleteAsync(cityId))
+                .ReturnsAsync(true);
+
+            // Act
+            var result = await _cityServices.DeleteCityAsync(cityId);
+
+            // Assert
+            Assert.True(result);
+        }
+
     }
 }
