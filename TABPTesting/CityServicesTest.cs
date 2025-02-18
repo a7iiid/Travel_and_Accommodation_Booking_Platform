@@ -189,6 +189,13 @@ namespace TABPTesting
             _mockCityRepo.Verify(r => r.InsertAsync(It.IsAny<City>()), Times.Once);
         }
 
+        [Fact]
+        public async Task UpdateCityAsync_WhenDtoIsNull()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => _cityServices.UpdateCityAsync(null, Guid.NewGuid()));
+        }
 
     }
 }
