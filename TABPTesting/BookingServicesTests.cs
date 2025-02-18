@@ -20,7 +20,7 @@ public class BookingServicesTests
     private readonly Mock<IRoomRepository> _mockRoomRepo;
     private readonly Mock<IPaymentRepository> _mockPaymentRepo;
     private readonly Mock<IMapper> _mockMapper;
-    private readonly ApplicationDbContext _context; // Use real DbContext with in-memory database
+    private readonly ApplicationDbContext _context; 
     private readonly BookingServices _bookingServices;
 
     public BookingServicesTests()

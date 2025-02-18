@@ -27,7 +27,7 @@ namespace Application.Services
         {
             if (pageNumber <= 0 || pageSize <= 0)
                 throw new ArgumentException("Page number and size must be greater than zero.");
-            PaginatedList < City > cities = await ((CityRepository)_cityRepository).GetAllAsync(
+            PaginatedList < City > cities = await _cityRepository.GetAllAsync(
                                                     true,
                                                     searchQuery,
                                                     pageNumber,
