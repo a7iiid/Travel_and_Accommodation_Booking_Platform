@@ -225,5 +225,20 @@ namespace TABPTesting
             Assert.True(result);
         }
 
+        [Fact]
+        public async Task DeleteCityAsync_ReturnsFalse_WhenFailure()
+        {
+            // Arrange
+            var cityId = Guid.NewGuid();
+            _mockCityRepo.Setup(r => r.DeleteAsync(cityId))
+                .ReturnsAsync(false);
+
+            // Act
+            var result = await _cityServices.DeleteCityAsync(cityId);
+
+            // Assert
+            Assert.False(result);
+        }
+
     }
 }
