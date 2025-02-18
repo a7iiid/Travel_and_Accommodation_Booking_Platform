@@ -47,7 +47,7 @@ namespace Application.Services
          int pageNumber,
          int pageSize)
         {
-            var cities = await ((CityRepository)_cityRepository).GetAllAsync(false, searchQuery, pageNumber, pageSize);
+            var cities = await _cityRepository.GetAllAsync(false, searchQuery, pageNumber, pageSize);
             var cityDTOs = _mapper.Map<List<CityDTOWithoutHotels>>(cities.Items);
             return new PaginatedList<CityDTOWithoutHotels>(cityDTOs, cities.PageData);
         }

@@ -14,7 +14,7 @@ namespace TABPTesting
 {
     public class CityServicesTest
     {
-        private readonly Mock<ICityRepository> _cityRepository;
+        private readonly Mock<ICityRepository> _mockCityRepo;
         private readonly Mock<IMapper> _mockMapper;
         private readonly ApplicationDbContext _context;
         private readonly CityServices _cityServices;
@@ -24,12 +24,12 @@ namespace TABPTesting
             .UseInMemoryDatabase(databaseName: "TestDb")
             .Options;
 
-            _cityRepository = new Mock<ICityRepository>();
+            _mockCityRepo = new Mock<ICityRepository>();
             _mockMapper = new Mock<IMapper>();
 
             _context = new ApplicationDbContext(options);
             _cityServices = new CityServices(
-                               _cityRepository.Object,
+                               _mockCityRepo.Object,
                                               _mockMapper.Object
                                                          );
         }
@@ -55,7 +55,7 @@ namespace TABPTesting
             );
 
             // Mock repository response
-            _cityRepository.Setup(repo =>
+            _mockCityRepo.Setup(repo =>
                 repo.GetAllAsync(true, searchQuery, pageNumber, pageSize)
             ).ReturnsAsync(paginatedCities);
 
@@ -92,7 +92,7 @@ namespace TABPTesting
             var cities = new List<City>(); // Empty list
             var paginatedCities = new PaginatedList<City>(cities, pageData);
 
-            _cityRepository.Setup(repo =>
+            _mockCityRepo.Setup(repo =>
                 repo.GetAllAsync(true, searchQuery, pageNumber, pageSize)
             ).ReturnsAsync(paginatedCities);
 
@@ -100,6 +100,28 @@ namespace TABPTesting
             await Assert.ThrowsAsync<NotFoundException>(() =>
                 _cityServices.GetCitiesWithHotelsAsync(searchQuery, pageNumber, pageSize)
             );
+        }
+
+        [Fact]
+        public async Task GetCitiesWithoutHotelsAsync_ReturnsCities_WhenCitiesExist()
+        {
+            // Arrange
+            var cities = new List<City> { new City(), new City() };
+            var paginatedCities = new PaginatedList<City>(
+                cities,
+                new PageData(2, 5, 1)
+            );
+
+            _mockCityRepo.Setup(r => r.GetAllAsync(false, It.IsAny<string>(), 1, 5))
+                .ReturnsAsync(paginatedCities);
+            _mockMapper.Setup(m => m.Map<List<CityDTOWithoutHotels>>(It.IsAny<List<City>>()))
+                .Returns(new List<CityDTOWithoutHotels> { new(), new() });
+
+            // Act
+            var result = await _cityServices.GetCitiesWithOutHotelsAsync(null, 1, 5);
+
+            // Assert
+            Assert.Equal(2, result.Items.Count);
         }
     }
 }
