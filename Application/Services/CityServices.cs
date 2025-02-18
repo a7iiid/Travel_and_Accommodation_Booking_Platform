@@ -67,8 +67,7 @@ namespace Application.Services
 
             var cityEntity = _mapper.Map<City>(cityDTO);
 
-            if (string.IsNullOrWhiteSpace(cityEntity.PostOfficeCode))
-                throw new ArgumentException("PostOfficeCode cannot be null or empty.");
+            
 
             await _cityRepository.InsertAsync(cityEntity);
         }

@@ -159,5 +159,36 @@ namespace TABPTesting
             await Assert.ThrowsAsync<ArgumentNullException>(
                 () => _cityServices.AddCityAsync(null));
         }
+        [Fact]
+        public async Task AddCityAsync_WhenValid()
+        {
+            // Arrange
+            var dto = new CityDTOForAdd
+            {
+                PostOffice = "12345", 
+                CountryCode = "PS",
+                CountryName = "Palestine",
+                Name = "Jenin"
+            };
+
+            var cityEntity = new City
+            {
+                PostOfficeCode = dto.PostOffice,
+                CountryCode = dto.CountryCode,
+                Country = dto.CountryName,
+                Name = dto.Name
+            };
+
+            _mockMapper.Setup(m => m.Map<City>(dto))
+                .Returns(cityEntity);
+
+            // Act
+            await _cityServices.AddCityAsync(dto);
+
+            // Assert
+            _mockCityRepo.Verify(r => r.InsertAsync(It.IsAny<City>()), Times.Once);
+        }
+
+
     }
 }
