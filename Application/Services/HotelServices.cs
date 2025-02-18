@@ -13,10 +13,10 @@ namespace Application.Services
     public class HotelServices
     {
         private readonly IMapper _mapper;
-        private readonly HotelRepository _customHotelRepository;
+        private readonly IHotelRepository _customHotelRepository;
 
 
-        public HotelServices(HotelRepository hotelRepository, IMapper mapper)
+        public HotelServices(IHotelRepository hotelRepository, IMapper mapper)
         {
             _customHotelRepository = hotelRepository ?? throw new ArgumentNullException(nameof(hotelRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -60,7 +60,7 @@ namespace Application.Services
         {
 
             var hotelEntity = _mapper.Map<Hotel>(hotelDTO);
-            await _customHotelRepository.AddAsync(hotelEntity);
+            await _customHotelRepository.InsertAsync(hotelEntity);
         }
 
         public async Task UpdateHotelAsync(Guid id, HotelDTO hotelDTO)

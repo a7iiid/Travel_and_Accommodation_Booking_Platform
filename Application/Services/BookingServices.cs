@@ -6,22 +6,22 @@ using Domain.Enum;
 using Domain.Exceptions;
 using Application.DTOs.PaymentDTOs;
 using Infrastructure.DB;
-using Application.@interface;
+using Domain.Interfaces;
 
 namespace Application.Services
 {
     public class BookingServices
     {
-        private readonly BookingRepository _bookingRepository;
-        private readonly RoomRepository _roomRepository;
-        private readonly IPaymentServices _paymentServices;
+        private readonly IBookingRepository _bookingRepository;
+        private readonly IRoomRepository _roomRepository;
+        private readonly IPaymentRepository _paymentServices;
         private readonly ApplicationDbContext _context;
 
         private readonly IMapper _mapper;
         public BookingServices(
-            BookingRepository bookingRepository,
-            RoomRepository roomRepository,
-            IPaymentServices paymentServices,
+            IBookingRepository bookingRepository,
+            IRoomRepository roomRepository,
+            IPaymentRepository paymentServices,
             IMapper mapper,
             ApplicationDbContext context)
         {
@@ -86,7 +86,7 @@ namespace Application.Services
                 };
 
                 // add booking
-                var createdBooking = await _bookingRepository.AddAsync(booking);
+                var createdBooking = await _bookingRepository.InsertAsync(booking);
                 if (createdBooking == null)
                 {
 
@@ -95,7 +95,7 @@ namespace Application.Services
                 }
 
                 // Create payment
-                PaymentDTO payment = new PaymentDTO
+                Payment payment = new Payment
                 {
                     BookingId = createdBooking.Id,
                     Amount = await price,
@@ -107,7 +107,7 @@ namespace Application.Services
 
 
                 BookingResultDTO bookingResult = _mapper.Map<BookingResultDTO>(createdBooking);
-                bookingResult.ApproveLink = await _paymentServices.AddPaymentAsync(payment);
+                bookingResult.ApproveLink = await _paymentServices.InsertAsync(payment);
                 await transaction.CommitAsync();
 
                 return bookingResult;

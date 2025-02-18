@@ -1,31 +1,30 @@
 ﻿using Application.DTOs.PaymentDTOs;
-using Application.@interface;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Interfaces;
+using Domain.Model;
 using Infrastructure.Repository;
 using Pay.Interfaces;
 
 namespace Application.Services
 {
-    public class PaymentServices: IPaymentServices
+    public class PaymentServices
     {
-        private readonly Repository<Payment> _paymentRepository;
+        private readonly IPaymentRepository _paymentRepository;
         private readonly IMapper _mapper;
-        private readonly IPayment _payment;
 
-        public PaymentServices(Repository<Payment> paymentRepository, IMapper mapper,IPayment payment)
+        public PaymentServices(IPaymentRepository paymentRepository, IMapper mapper,IPayment payment)
         {
             _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _payment = payment ?? throw new ArgumentNullException(nameof(payment));
         }
 
         /// <summary>
         /// Retrieves all payments.
         /// </summary>
-        public async Task<IReadOnlyList<Payment>> GetAllPaymentsAsync()
+        public async Task<PaginatedList<Payment>> GetAllPaymentsAsync(int pageNumber=1, int pageSize=5)
         {
-            var payments = await _paymentRepository.GetAllAsync();
+            var payments = await _paymentRepository.GetAllAsync( pageNumber,  pageSize);
             return payments;
         }
 
@@ -47,9 +46,7 @@ namespace Application.Services
         public async Task<string?> AddPaymentAsync(PaymentDTO paymentDTO)
         {
             var paymentEntity = _mapper.Map<Payment>(paymentDTO);
-            var payment = await _payment.CreateOrderAsync((decimal)paymentDTO.Amount, "USD");
-            string? ApprovUrl = payment.Links.FirstOrDefault(x => x.Rel == "approve")?.Href;
-            await _paymentRepository.AddAsync(paymentEntity);
+           string? ApprovUrl =await _paymentRepository.InsertAsync(paymentEntity);
             
             return ApprovUrl;
         }

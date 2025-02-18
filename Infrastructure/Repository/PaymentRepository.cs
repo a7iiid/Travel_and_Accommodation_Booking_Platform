@@ -1,5 +1,4 @@
 ﻿
-
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
@@ -7,40 +6,39 @@ using Domain.Model;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Pay.Interfaces;
 
 namespace Infrastructure.Repository
 {
-   
-    public class RoomTypeRepository : IRoomTypeRepository
+    public class PaymentRepository : IPaymentRepository
     {
         private readonly ApplicationDbContext _context;
-        private readonly ILogger<RoomTypeRepository> _logger;
-
-        public RoomTypeRepository(ApplicationDbContext context, ILogger<RoomTypeRepository> logger)
-
+        private readonly ILogger<PaymentRepository> _logger;
+        private readonly IPayment _payment;
+        public PaymentRepository(ApplicationDbContext context,IPayment payment,ILogger<PaymentRepository>logger)
         {
-            _context = context;
-            _logger = logger;
+            _context= context ?? throw new ArgumentNullException(nameof(context));
+            _payment = payment ?? throw new ArgumentNullException(nameof(payment));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            
         }
-
-
-        public async Task<RoomType> GetByIdAsync(Guid id)
+        public async Task<Payment> GetByIdAsync(Guid id)
         {
             try
             {
-                var entity = await _context.RoomTypes.FindAsync(id);
+                var entity = await _context.Payments.FindAsync(id);
                 if (entity == null)
                 {
-                    _logger.LogError($"RoomType with ID {id} was not found.");
-                    throw new NotFoundException($"RoomType with ID {id} was not found.");
+                    _logger.LogError($"Payment with ID {id} was not found.");
+                    throw new NotFoundException($"Payment with ID {id} was not found.");
 
                 }
                 return entity;
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error fetching RoomType by ID: {ex.Message}");
-                throw new DataAccessException("An error occurred while retrieving the RoomType.", ex);
+                _logger.LogError($"Error fetching Payment by ID: {ex.Message}");
+                throw new DataAccessException("An error occurred while retrieving the Payment.", ex);
             }
         }
 
@@ -52,8 +50,8 @@ namespace Infrastructure.Repository
             {
                 var entity = await GetByIdAsync(id);
 
-                _context.RoomTypes.Remove(entity);
-                _logger.LogInformation($"RoomType deleted from the database");
+                _context.Payments.Remove(entity);
+                _logger.LogInformation($"Payment deleted from the database");
                 await SaveChangesAsync();
                 return true;
             }
@@ -64,8 +62,8 @@ namespace Infrastructure.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error deleting RoomType: {ex.Message}");
-                throw new DataAccessException("An error occurred while deleting the RoomType.", ex);
+                _logger.LogError($"Error deleting Payment: {ex.Message}");
+                throw new DataAccessException("An error occurred while deleting the Payment.", ex);
             }
         }
 
@@ -73,7 +71,7 @@ namespace Infrastructure.Repository
         {
             try
             {
-                return await _context.RoomTypes.FindAsync(id) != null;
+                return await _context.Payments.FindAsync(id) != null;
             }
             catch (Exception ex)
             {
@@ -82,25 +80,25 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task UpdateAsync(RoomType RoomType, Guid id)
+        public async Task UpdateAsync(Payment Payment, Guid id)
         {
             try
             {
-                if (RoomType == null)
-                    throw new ArgumentNullException(nameof(RoomType), "Entity cannot be null.");
+                if (Payment == null)
+                    throw new ArgumentNullException(nameof(Payment), "Entity cannot be null.");
 
                 var existingEntity = await GetByIdAsync(id);
 
 
 
 
-                _context.Entry(existingEntity).CurrentValues.SetValues(RoomType);
+                _context.Entry(existingEntity).CurrentValues.SetValues(Payment);
 
                 await SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error updating RoomType: {ex.Message}");
+                _logger.LogError($"Error updating Payment: {ex.Message}");
                 throw new DataAccessException("An error occurred while updating the entity.", ex);
             }
         }
@@ -120,26 +118,18 @@ namespace Infrastructure.Repository
             }
 
         }
-        public async Task<PaginatedList<RoomType>> GetAllAsync(Guid hotelId, bool includeAmenities, int pageNumber, int pageSize)
+        public async Task<PaginatedList<Payment>> GetAllAsync( int pageNumber, int pageSize)
         {
             try
             {
                 var query = _context
-                    .RoomTypes
-                    .Where(roomType => roomType
-                        .HotelId
-                        .Equals(hotelId))
+                    .Payments
                     .AsQueryable();
 
                 var totalItemCount = await query.CountAsync();
                 var pageData = new PageData(totalItemCount, pageSize, pageNumber);
 
-                if (includeAmenities)
-                {
-                    query = query.
-                        Include(roomCategory =>
-                        roomCategory.Amenities);
-                }
+               
 
                 var result = query
                     .Skip(pageSize * (pageNumber - 1))
@@ -147,23 +137,31 @@ namespace Infrastructure.Repository
                     .AsNoTracking()
                     .ToList();
 
-                return new PaginatedList<RoomType>(result, pageData);
+                return new PaginatedList<Payment>(result, pageData);
             }
             catch (Exception)
             {
-                return new PaginatedList<RoomType>(
-                    new List<RoomType>(),
+                return new PaginatedList<Payment>(
+                    new List<Payment>(),
                     new PageData(0, 0, 0));
             }
         }
 
-
-
-        public async Task<bool> CheckRoomTypeExistenceForHotel(Guid hotelId, Guid roomTypeId)
+        public async Task<string?> InsertAsync(Payment payment)
         {
-            return (await GetByIdAsync(roomTypeId))
-                   .HotelId.Equals(hotelId);
+            try
+            {
+                var pay = await _payment.CreateOrderAsync((decimal)payment.Amount, "USD");
+                string? ApprovUrl = pay.Links.FirstOrDefault(x => x.Rel == "approve")?.Href;
+                await _context.Payments.AddAsync(payment);
+
+                return ApprovUrl;
+            }
+            catch(Exception ex) 
+                {     
+                  _logger.LogError($"Error inserting Payment: {ex.Message}");
+                  throw new DataAccessException("An error occurred while inserting the entity.", ex);
+                }
         }
     }
-
 }
