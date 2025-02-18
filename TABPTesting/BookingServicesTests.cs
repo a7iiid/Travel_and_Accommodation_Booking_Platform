@@ -25,13 +25,11 @@ public class BookingServicesTests
 
     public BookingServicesTests()
     {
-        // Configure in-memory database
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
             .Options;
         _context = new ApplicationDbContext(options);
 
-        // Initialize repositories and services
         _mockBookingRepo = new Mock<IBookingRepository>();
         _mockRoomRepo = new Mock<IRoomRepository>();
         _mockPaymentRepo = new Mock<IPaymentRepository>();
@@ -42,7 +40,7 @@ public class BookingServicesTests
             _mockRoomRepo.Object,
             _mockPaymentRepo.Object,
             _mockMapper.Object,
-            _context // Use real context with in-memory database
+            _context 
         );
     }
 
@@ -160,6 +158,27 @@ public class BookingServicesTests
         );
     }
 
+   
+    [Fact]
+    public async Task CreateBookingAsync_RollsBackTransaction_OnException()
+    {
+        // Arrange
+        var bookingDto = new BookingDTOForCreation
+        {
+            RoomId = Guid.NewGuid(),
+            CheckInDate = DateTime.UtcNow.AddDays(1),
+            CheckOutDate = DateTime.UtcNow.AddDays(3),
+            PaymentMethod = PaymentMethod.PayPal
+        };
+        var userGuid = Guid.NewGuid();
 
+        _mockRoomRepo.Setup(repo => repo.GetRoomWithPriceAsync(bookingDto.RoomId))
+            .ThrowsAsync(new InvalidOperationException("Room not found"));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _bookingServices.CreateBookingAsync(bookingDto, userGuid)
+        );
+    }
 
 }
