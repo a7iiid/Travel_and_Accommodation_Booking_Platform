@@ -152,6 +152,12 @@ namespace TABPTesting
             await Assert.ThrowsAsync<KeyNotFoundException>(
                 () => _cityServices.GetCityByIdAsync(cityId));
         }
-
+        [Fact]
+        public async Task AddCityAsync_ThrowsArgumentNull_WhenDtoIsNull()
+        {
+            // Act & Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => _cityServices.AddCityAsync(null));
+        }
     }
 }
