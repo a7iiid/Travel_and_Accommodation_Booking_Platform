@@ -107,7 +107,8 @@ namespace Application.Services
 
 
                 BookingResultDTO bookingResult = _mapper.Map<BookingResultDTO>(createdBooking);
-                bookingResult.ApproveLink = await _paymentServices.InsertAsync(payment);
+                 var createOrderResult= await _paymentServices.InsertAsync(payment);
+                bookingResult.ApproveLink = createOrderResult.ApprovalUrl;
                 await transaction.CommitAsync();
 
                 return bookingResult;

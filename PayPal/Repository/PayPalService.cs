@@ -1,4 +1,5 @@
 ﻿using Domain.Exceptions;
+using Domain.Model;
 using Microsoft.Extensions.Configuration;
 using Pay.Interfaces;
 using PayPalCheckoutSdk.Core;
@@ -28,7 +29,7 @@ public class PayPalService : IPayment
         _cancelUrl = config["PayPal:CancelUrl"];
     }
 
-    public async Task<Order> CreateOrderAsync(decimal amount, string currency)
+    public async Task<CreateOrderResult> CreateOrderAsync(decimal amount, string currency)
     {
         try
         {
@@ -60,9 +61,14 @@ public class PayPalService : IPayment
             var response = await _client.Execute(request);
 
             if (response.StatusCode != HttpStatusCode.Created)
+            {
                 throw new PaymentException($"PayPal API error: {response.StatusCode}");
-
-            return response.Result<Order>();
+            }
+            var order= response.Result<Order>();
+            return new CreateOrderResult {OrderId= order.Id,
+                ApprovalUrl= order.Links.First(x => x.Rel == "approve").Href,
+                PaymentMethod=Domain.Enum.PaymentMethod.PayPal
+            };
         }
         catch (HttpException ex)
         {

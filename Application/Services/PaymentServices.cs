@@ -43,12 +43,12 @@ namespace Application.Services
         /// <summary>
         /// Adds a new payment.
         /// </summary>
-        public async Task<string?> AddPaymentAsync(PaymentDTO paymentDTO)
+        public async Task<CreateOrderResult> AddPaymentAsync(PaymentDTO paymentDTO)
         {
             var paymentEntity = _mapper.Map<Payment>(paymentDTO);
-           string? ApprovUrl =await _paymentRepository.InsertAsync(paymentEntity);
+           CreateOrderResult createOrderResult =await _paymentRepository.InsertAsync(paymentEntity);
             
-            return ApprovUrl;
+            return createOrderResult;
         }
 
         /// <summary>

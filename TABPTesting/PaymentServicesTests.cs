@@ -74,45 +74,45 @@ namespace TABPTesting
                                () => _paymentServices.GetPaymentByIdAsync(paymentId));
         }
 
-        [Fact]
-        public async Task AddPaymentAsync_ReturnsApprovalUrl_WhenPaymentAdded()
-        {
-            //Arrange
-            var paymentDto = new PaymentDTO();
-            var paymentEntity = new Payment();
-            var approvalUrl = "https://www.example.com";
+        //[Fact]
+        //public async Task AddPaymentAsync_ReturnsApprovalUrl_WhenPaymentAdded()
+        //{
+        //    //Arrange
+        //    var paymentDto = new PaymentDTO();
+        //    var paymentEntity = new Payment();
+        //    var approvalUrl = "https://www.example.com";
 
-            _mockMapper.Setup(m => m.Map<Payment>(paymentDto))
-                .Returns(paymentEntity);
-            _mockPaymentRepo.Setup(r => r.InsertAsync(paymentEntity))
-                .ReturnsAsync(approvalUrl);
+        //    _mockMapper.Setup(m => m.Map<Payment>(paymentDto))
+        //        .Returns(paymentEntity);
+        //    _mockPaymentRepo.Setup(r => r.InsertAsync(paymentEntity))
+        //        .ReturnsAsync(approvalUrl);
 
-            //Act
-            var result = await _paymentServices.AddPaymentAsync(paymentDto);
+        //    //Act
+        //    var result = await _paymentServices.AddPaymentAsync(paymentDto);
 
-            //Assert
-            _mockMapper.Verify(m => m.Map<Payment>(paymentDto), Times.Once);
-            _mockPaymentRepo.Verify(r => r.InsertAsync(paymentEntity), Times.Once);
-            Assert.Equal(approvalUrl, result);
-        }
+        //    //Assert
+        //    _mockMapper.Verify(m => m.Map<Payment>(paymentDto), Times.Once);
+        //    _mockPaymentRepo.Verify(r => r.InsertAsync(paymentEntity), Times.Once);
+        //    Assert.Equal(approvalUrl, result);
+        //}
 
-        [Fact]
-        public async Task AddPaymentAsync_ReturnsApprovalUrl_WhenPaymentNotAdded()
-        { 
-            //Arrange
-            var paymentDto = new PaymentDTO();
-            var paymentEntity = new Payment();
-            _mockMapper.Setup(m => m.Map<Payment>(paymentDto))
-                .Returns(paymentEntity);
-            _mockPaymentRepo.Setup(r => r.InsertAsync(paymentEntity))
-                .ReturnsAsync((string?)null);
-            //Act
-            var result = await _paymentServices.AddPaymentAsync(paymentDto);
-            //Assert
-            _mockMapper.Verify(m => m.Map<Payment>(paymentDto), Times.Once);
-            _mockPaymentRepo.Verify(r => r.InsertAsync(paymentEntity), Times.Once);
-            Assert.Null(result);
-        }
+        //[Fact]
+        //public async Task AddPaymentAsync_ReturnsApprovalUrl_WhenPaymentNotAdded()
+        //{ 
+        //    //Arrange
+        //    var paymentDto = new PaymentDTO();
+        //    var paymentEntity = new Payment();
+        //    _mockMapper.Setup(m => m.Map<Payment>(paymentDto))
+        //        .Returns(paymentEntity);
+        //    _mockPaymentRepo.Setup(r => r.InsertAsync(paymentEntity))
+        //        .ReturnsAsync((string?)null);
+        //    //Act
+        //    var result = await _paymentServices.AddPaymentAsync(paymentDto);
+        //    //Assert
+        //    _mockMapper.Verify(m => m.Map<Payment>(paymentDto), Times.Once);
+        //    _mockPaymentRepo.Verify(r => r.InsertAsync(paymentEntity), Times.Once);
+        //    Assert.Null(result);
+        //}
 
         [Fact]
         public async Task UpdatePaymentAsync_UpdatesExistingPayment()

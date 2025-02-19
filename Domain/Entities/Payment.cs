@@ -11,5 +11,7 @@ namespace Domain.Entities
         public PaymentMethod Method { get; set; }
         public PaymentStatus Status { get; set; }
         public double Amount { get; set; }
+        public string? OrderId { get; set; }
+        public string? ApprovalUrl { get; set; }
     }
 }

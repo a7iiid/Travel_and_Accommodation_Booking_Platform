@@ -27,8 +27,8 @@ namespace Presentation.Controllers
                 );
                 return Ok(new
                 {
-                    result.Id,
-                    ApprovalUrl = result.Links.First(l => l.Rel == "approve").Href
+                    result.OrderId,
+                    ApprovalUrl =result.ApprovalUrl
                 });
             }
             catch (PaymentException ex)

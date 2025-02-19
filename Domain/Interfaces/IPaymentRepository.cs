@@ -6,7 +6,7 @@ namespace Domain.Interfaces
 {
     public interface IPaymentRepository
     {
-        Task<string?> InsertAsync(Payment payment);
+        Task<CreateOrderResult?> InsertAsync(Payment payment);
         Task<bool> DeleteAsync(Guid id);
         Task<PaginatedList<Payment>> GetAllAsync( int pageNumber, int pageSize);
         Task<Payment> GetByIdAsync(Guid id);

@@ -147,15 +147,15 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<string?> InsertAsync(Payment payment)
+        public async Task<CreateOrderResult> InsertAsync(Payment payment)
         {
             try
             {
-                var pay = await _payment.CreateOrderAsync((decimal)payment.Amount, "USD");
-                string? ApprovUrl = pay.Links.FirstOrDefault(x => x.Rel == "approve")?.Href;
+                var paymentResult = await _payment.CreateOrderAsync((decimal)payment.Amount, "USD");
+                
                 await _context.Payments.AddAsync(payment);
 
-                return ApprovUrl;
+                return paymentResult;
             }
             catch(Exception ex) 
                 {     
