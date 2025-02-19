@@ -168,6 +168,26 @@ namespace TABPTesting
             // Assert
             Assert.True(result);
         }
+        [Fact]
+        public async Task GetHotelsByOwnerIdAsync_ReturnsPaginatedResults()
+        {
+            // Arrange
+            var ownerId = Guid.NewGuid();
+            var hotels = new List<Hotel> { new Hotel(), new Hotel() };
+            var paginatedHotels = new PaginatedList<Hotel>(hotels, new PageData(2, 10, 1));
+            var expectedDtos = new List<HotelDTO> { new(), new() };
+
+            _mockHotelRepo.Setup(r => r.GetHotelsByOwnerIdAsync(ownerId, 10, 1))
+                .ReturnsAsync(paginatedHotels);
+            _mockMapper.Setup(m => m.Map<List<HotelDTO>>(hotels))
+                .Returns(expectedDtos);
+
+            // Act
+            var result = await _hotelServices.GetHotelsByOwnerIdAsync(ownerId, 1, 10);
+
+            // Assert
+            Assert.Equal(2, result.Items.Count);
+        }
 
     }
 }
