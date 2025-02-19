@@ -132,6 +132,20 @@ namespace TABPTesting
             _mockPaymentRepo.Verify(r => r.UpdateAsync(existingPayment, paymentId), Times.Once);
         }
 
+        [Fact]
+        public async Task UpdatePaymentAsync_ThrowsKeyNotFoundException_UpdatesNotExistingPayment()
+        {
+            //Arrange
+            var paymentId = Guid.NewGuid();
+            _mockPaymentRepo.Setup(r => r.GetByIdAsync(paymentId))
+                .ReturnsAsync((Payment)null);
+            _mockMapper.Setup(m => m.Map<PaymentDTO>(It.IsAny<Payment>()))
+                .Returns(new PaymentDTO());
+            //Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(
+                               () => _paymentServices.UpdatePaymentAsync(paymentId, new PaymentDTO()));
+
+        }
 
         }
 }
