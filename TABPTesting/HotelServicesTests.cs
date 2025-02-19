@@ -136,5 +136,22 @@ namespace TABPTesting
             _mockHotelRepo.Verify(r => r.InsertAsync(hotelEntity), Times.Once);
         }
 
+        [Fact]
+        public async Task UpdateHotelAsync_UpdatesExistingHotel()
+        {
+            // Arrange
+            var hotelId = Guid.NewGuid();
+            var existingHotel = new Hotel { Id = hotelId };
+            var hotelDto = new HotelDTO();
+
+            _mockHotelRepo.Setup(r => r.GetByIdAsync(hotelId))
+                .ReturnsAsync(existingHotel);
+
+            // Act
+            await _hotelServices.UpdateHotelAsync(hotelId, hotelDto);
+
+            // Assert
+            _mockHotelRepo.Verify(r => r.UpdateAsync(existingHotel, hotelId), Times.Once);
+        }
     }
 }
