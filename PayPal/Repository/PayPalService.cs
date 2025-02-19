@@ -76,23 +76,25 @@ public class PayPalService : IPayment
         }
     }
 
-    public async Task<Order> CaptureOrderAsync(string orderId)
+    public async Task<string?> GetOrderStatusAsync(string orderId)
     {
         try
         {
-            var request = new OrdersCaptureRequest(orderId);
-            request.RequestBody(new OrderActionRequest());
-
+            var request = new OrdersGetRequest(orderId);
             var response = await _client.Execute(request);
 
-            if (response.StatusCode != HttpStatusCode.Created)
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
                 throw new PaymentException($"PayPal API error: {response.StatusCode}");
+            }
 
-            return response.Result<Order>();
+            return response.Result<Order>().Status;
         }
         catch (HttpException ex)
         {
             throw new PaymentException($"PayPal API error: {ex.Message}", ex);
         }
     }
+
+}
 }

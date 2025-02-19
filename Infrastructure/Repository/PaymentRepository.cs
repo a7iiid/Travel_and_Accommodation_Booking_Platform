@@ -67,18 +67,6 @@ namespace Infrastructure.Repository
             }
         }
 
-        public async Task<bool> IsExistsAsync(Guid id)
-        {
-            try
-            {
-                return await _context.Payments.FindAsync(id) != null;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"Error checking existence of entity: {ex.Message}");
-                throw new DataAccessException("An error occurred while checking the existence of the entity.", ex);
-            }
-        }
 
         public async Task UpdateAsync(Payment Payment, Guid id)
         {
@@ -165,6 +153,11 @@ namespace Infrastructure.Repository
                   _logger.LogError($"Error inserting Payment: {ex.Message}");
                   throw new DataAccessException("An error occurred while inserting the entity.", ex);
                 }
+        }
+    
+        public async Task ConfirmPaymentAsync()
+        {
+
         }
     }
 }
