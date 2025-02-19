@@ -13,7 +13,7 @@ namespace Application.Services
         private readonly IPaymentRepository _paymentRepository;
         private readonly IMapper _mapper;
 
-        public PaymentServices(IPaymentRepository paymentRepository, IMapper mapper,IPayment payment)
+        public PaymentServices(IPaymentRepository paymentRepository, IMapper mapper)
         {
             _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
