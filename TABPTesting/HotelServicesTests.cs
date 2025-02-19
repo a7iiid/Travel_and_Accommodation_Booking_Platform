@@ -57,5 +57,39 @@ namespace TABPTesting
             Assert.Equal(hotelDto, result);
         }
 
+        [Fact]
+        public async Task GetHotelByIdAsync_ThrowsKeyNotFoundException_WhenHotelMissing()
+        {
+            // Arrange
+            var hotelId = Guid.NewGuid();
+            _mockHotelRepo.Setup(r => r.GetByIdAsync(hotelId))
+                .ReturnsAsync((Hotel)null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(
+                () => _hotelServices.GetHotelByIdAsync(hotelId));
+        }
+
+        [Fact]
+        public async Task GetAvailableRoomsAsync_ReturnsMappedRooms()
+        {
+            // Arrange
+            var hotelId = Guid.NewGuid();
+            var rooms = new List<Room> { new Room(), new Room() };
+            var checkIn = DateTime.Now.AddDays(1);
+            var checkOut = DateTime.Now.AddDays(3);
+
+            _mockHotelRepo.Setup(r => r.GetHotelAvailableRoomsAsync(hotelId, checkIn, checkOut))
+                .ReturnsAsync(rooms);
+            _mockMapper.Setup(m => m.Map<List<Room>>(rooms))
+                .Returns(rooms);
+
+            // Act
+            var result = await _hotelServices.GetAvailableRoomsAsync(hotelId, checkIn, checkOut);
+
+            // Assert
+            Assert.Equal(2, result.Count);
+        }
+
     }
 }
