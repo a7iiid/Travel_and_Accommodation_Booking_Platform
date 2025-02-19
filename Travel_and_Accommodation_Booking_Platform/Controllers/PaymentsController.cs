@@ -1,7 +1,7 @@
 ﻿using Application.DTOs.PaymentDTOs;
+using Application.Services;
 using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
-using Pay.Interfaces;
 
 namespace Presentation.Controllers
 {
@@ -9,21 +9,20 @@ namespace Presentation.Controllers
     [Route("api/[controller]")]
     public class PaymentsController : ControllerBase
     {
-        private readonly IPayment _paymentService;
+        private readonly PaymentServices _paymentService;
 
-        public PaymentsController(IPayment paymentService)
+        public PaymentsController(PaymentServices paymentService)
         {
             _paymentService = paymentService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreatePayment([FromBody] PaymentRequestDTO request)
+        public async Task<IActionResult> CreatePayment([FromBody] PaymentDTO paymentDTO)
         {
             try
             {
-                var result = await _paymentService.CreateOrderAsync(
-                    request.Amount,
-                    request.Currency
+                var result = await _paymentService.AddPaymentAsync(
+                    paymentDTO
                 );
                 return Ok(new
                 {
@@ -37,18 +36,23 @@ namespace Presentation.Controllers
             }
         }
 
-        [HttpGet("capture")]
-        public async Task<IActionResult> CapturePayment([FromQuery] string orderId)
+        [HttpGet("verify-payment")]
+        public async Task<IActionResult> VerifyPayment([FromQuery] string orderId)
         {
-            try
+            if (string.IsNullOrEmpty(orderId))
             {
-                var result = await _paymentService.CaptureOrderAsync(orderId);
-                return Ok(new { result.Id, result.Status });
+                return BadRequest("Invalid order ID.");
             }
-            catch (PaymentException ex)
+
+            var success = await _paymentService.VerifyAndUpdatePaymentStatusAsync(orderId);
+
+            if (success)
             {
-                return BadRequest(new { Error = ex.Message });
+                return Ok("Payment verified and updated successfully.");
             }
+
+            return BadRequest("Payment verification failed.");
         }
+
     }
 }

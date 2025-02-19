@@ -1,5 +1,6 @@
 ﻿
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
@@ -14,11 +15,11 @@ namespace Infrastructure.Repository
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<PaymentRepository> _logger;
-        private readonly IPayment _payment;
-        public PaymentRepository(ApplicationDbContext context,IPayment payment,ILogger<PaymentRepository>logger)
+        private readonly IPaymentGateway _paymentGateway;
+        public PaymentRepository(ApplicationDbContext context,IPaymentGateway payment,ILogger<PaymentRepository>logger)
         {
             _context= context ?? throw new ArgumentNullException(nameof(context));
-            _payment = payment ?? throw new ArgumentNullException(nameof(payment));
+            _paymentGateway = payment ?? throw new ArgumentNullException(nameof(payment));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             
         }
@@ -139,7 +140,7 @@ namespace Infrastructure.Repository
         {
             try
             {
-                var paymentResult = await _payment.CreateOrderAsync((decimal)payment.Amount, "USD");
+                var paymentResult = await _paymentGateway.CreateOrderAsync((decimal)payment.Amount, "USD");
 
                 payment.ApprovalUrl = paymentResult.ApprovalUrl;
                 payment.OrderId=paymentResult.OrderId;
@@ -154,10 +155,29 @@ namespace Infrastructure.Repository
                   throw new DataAccessException("An error occurred while inserting the entity.", ex);
                 }
         }
-    
-        public async Task ConfirmPaymentAsync()
-        {
 
+        public async Task<bool> VerifyAndUpdatePaymentStatusAsync(string orderId)
+        {
+            var order = await _paymentGateway.GetOrderStatusAsync(orderId);
+
+            if (order == null)
+            {
+                throw new PaymentException("Failed to retrieve order details.");
+            }
+
+            if (order.Status == "COMPLETED")
+            {
+                var payment = await _context.Payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
+                if (payment != null)
+                {
+                    payment.Status = PaymentStatus.Completed;
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+            }
+
+            return false;
         }
+
     }
 }

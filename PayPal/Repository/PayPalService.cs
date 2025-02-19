@@ -9,7 +9,7 @@ using System.Net;
 
 
 
-public class PayPalService : IPayment
+public class PayPalService : IPaymentGateway
 {
     private readonly PayPalHttpClient _client;
     private readonly string _returnUrl;
@@ -76,7 +76,7 @@ public class PayPalService : IPayment
         }
     }
 
-    public async Task<string?> GetOrderStatusAsync(string orderId)
+    public async Task<Order?> GetOrderStatusAsync(string orderId)
     {
         try
         {
@@ -88,7 +88,7 @@ public class PayPalService : IPayment
                 throw new PaymentException($"PayPal API error: {response.StatusCode}");
             }
 
-            return response.Result<Order>().Status;
+            return response.Result<Order>();
         }
         catch (HttpException ex)
         {
@@ -96,5 +96,4 @@ public class PayPalService : IPayment
         }
     }
 
-}
 }

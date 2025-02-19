@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.PaymentDTOs;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
 using Infrastructure.Repository;
@@ -70,6 +71,18 @@ namespace Application.Services
         public async Task<bool> DeletePaymentAsync(Guid id)
         {
             return await _paymentRepository.DeleteAsync(id);
+        }
+
+        public async Task<bool> VerifyAndUpdatePaymentStatusAsync(string orderId)
+        {
+            try
+            {
+                return await _paymentRepository.VerifyAndUpdatePaymentStatusAsync(orderId);
+            }
+            catch (Exception ex)
+            {
+                throw new DataAccessException("An error occurred while verifying and updating the payment status.", ex);
+            }
         }
     }
 }

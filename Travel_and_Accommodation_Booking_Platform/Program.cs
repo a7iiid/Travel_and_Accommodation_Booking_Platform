@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text;
 using Application.profile;
 using Application.Services;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Auth;
 using Infrastructure.Auth.password;
@@ -95,22 +96,30 @@ services.AddAuthorization(options =>
     }));
 
 services.AddScoped<IPasswordHasher, PasswordHasher>();
-services.AddScoped<IUserRepository, UserRepository>();
+services.AddScoped<IRepository<User>, UserRepository>();
 services.AddScoped<IAuthUser, AuthUser>();
 services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
+services.AddScoped<UserService>();
 services.AddScoped<ICityRepository, CityRepository>();
-services.AddScoped<IRoomAmenityRepository, RoomAmenityRepository>();
-services.AddScoped<IHotelRepository, HotelRepository>();
-services.AddScoped<IRoomRepository, RoomRepository>();
-services.AddScoped<IRoomTypeRepository, RoomTypeRepository>();
-services.AddScoped<IBookingRepository, BookingRepository>();
-services.AddScoped<IPaymentRepository, PaymentRepository>();
-builder.Services.AddScoped<IPayment, PayPalService>();
-builder.Services.AddScoped<UserService>();
-builder.Services.AddScoped<BookingServices>();
-builder.Services.AddScoped<HotelServices>();
-builder.Services.AddScoped<CityServices>();
+services.AddScoped<CityServices>();
+
+services.AddScoped<HotelRepository>();
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+services.AddScoped<HotelServices>();
+
+services.AddScoped<IRepository<Room>, RoomRepository>();
+services.AddScoped<RoomRepository>();
+
+services.AddScoped<IRepository<Booking>, BookingRepository>();
+services.AddScoped<BookingRepository>();
+services.AddScoped<BookingServices>();
+
 builder.Services.AddScoped<PaymentServices>();
+
+
+builder.Services.AddScoped<PayPalService>();
+builder.Services.AddScoped<IPaymentGateway, PayPalService>();
+
 
 
 builder.Services.AddAutoMapper(typeof(CityProfile));

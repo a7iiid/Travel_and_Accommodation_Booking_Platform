@@ -12,5 +12,6 @@ namespace Domain.Interfaces
         Task<Payment> GetByIdAsync(Guid id);
         Task SaveChangesAsync();
         Task UpdateAsync(Payment Payment, Guid id);
+        Task<bool> VerifyAndUpdatePaymentStatusAsync(string orderId);
     }
 }
