@@ -16,18 +16,14 @@ namespace TABPTesting
     {
         private readonly Mock<ICityRepository> _mockCityRepo;
         private readonly Mock<IMapper> _mockMapper;
-        private readonly ApplicationDbContext _context;
         private readonly CityServices _cityServices;
         public CityServicesTest()
         {
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseInMemoryDatabase(databaseName: "TestDb")
-            .Options;
-
+            
             _mockCityRepo = new Mock<ICityRepository>();
             _mockMapper = new Mock<IMapper>();
 
-            _context = new ApplicationDbContext(options);
+            
             _cityServices = new CityServices(
                                _mockCityRepo.Object,
                                               _mockMapper.Object
