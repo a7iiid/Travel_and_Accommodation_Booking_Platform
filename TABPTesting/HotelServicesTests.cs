@@ -91,5 +91,34 @@ namespace TABPTesting
             Assert.Equal(2, result.Count);
         }
 
+        [Fact]
+        public async Task SearchHotelsAsync_ReturnsHotelSearchResults()
+        {
+            // Arrange
+            var searchParams = new HotelSearchParameters();
+            
+
+            var expectedResults = new List<HotelSearchResult> { new HotelSearchResult(), new HotelSearchResult() };
+            var expectedPaginatedResults = new PaginatedList<HotelSearchResult>(expectedResults, new PageData(2, 10, 1));
+
+            _mockHotelRepo.Setup(r => r.HotelSearchAsync(searchParams))
+                .ReturnsAsync(expectedPaginatedResults);
+
+            _mockMapper.Setup(_mockMapper =>
+            _mockMapper.Map<List<HotelSearchResult>>(expectedResults))
+                .Returns(expectedResults);
+
+
+            
+
+            // Act
+            var result = await _hotelServices.SearchHotelsAsync(searchParams);
+
+            // Assert
+            Assert.Equal(2, result.Items.Count);
+            Assert.IsType<PaginatedList<HotelSearchResult>>(result);
+        }
+
+
     }
 }
