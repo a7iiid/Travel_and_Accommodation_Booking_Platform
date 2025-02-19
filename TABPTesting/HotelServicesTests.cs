@@ -1,5 +1,6 @@
 ﻿
 
+using Application.DTOs.HotelDTOs;
 using Application.Services;
 using AutoMapper;
 using Domain.Entities;
@@ -36,5 +37,25 @@ namespace TABPTesting
             // Assert
             Assert.Equal(2, result.Items.Count);
         }
+        [Fact]
+        public async Task GetHotelByIdAsync_ReturnsHotelDto_WhenHotelExists()
+        {
+            // Arrange
+            var hotelId = Guid.NewGuid();
+            var hotel = new Hotel { Id = hotelId };
+            var hotelDto = new HotelDTO();
+
+            _mockHotelRepo.Setup(r => r.GetByIdAsync(hotelId))
+                .ReturnsAsync(hotel);
+            _mockMapper.Setup(m => m.Map<HotelDTO>(hotel))
+                .Returns(hotelDto);
+
+            // Act
+            var result = await _hotelServices.GetHotelByIdAsync(hotelId);
+
+            // Assert
+            Assert.Equal(hotelDto, result);
+        }
+
     }
 }
