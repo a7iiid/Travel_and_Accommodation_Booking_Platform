@@ -153,5 +153,21 @@ namespace TABPTesting
             // Assert
             _mockHotelRepo.Verify(r => r.UpdateAsync(existingHotel, hotelId), Times.Once);
         }
+
+        [Fact]
+        public async Task DeleteHotelAsync_ReturnsTrue_WhenSuccessful()
+        {
+            // Arrange
+            var hotelId = Guid.NewGuid();
+            _mockHotelRepo.Setup(r => r.DeleteAsync(hotelId))
+                .ReturnsAsync(true);
+
+            // Act
+            var result = await _hotelServices.DeleteHotelAsync(hotelId);
+
+            // Assert
+            Assert.True(result);
+        }
+
     }
 }
