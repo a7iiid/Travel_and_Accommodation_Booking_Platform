@@ -147,5 +147,18 @@ namespace TABPTesting
 
         }
 
+        [Fact]
+        public async Task DeletePaymentAsync_ReturnTrue_WhenSuccessful()
+        {
+            //Arrange 
+            var paymentId = Guid.NewGuid();
+            _mockPaymentRepo.Setup(r => r.DeleteAsync(paymentId))
+                .ReturnsAsync(true);
+            //Act
+            var result = await _paymentServices.DeletePaymentAsync(paymentId);
+            //Assert
+            Assert.True(result);
+        }
+
         }
 }
