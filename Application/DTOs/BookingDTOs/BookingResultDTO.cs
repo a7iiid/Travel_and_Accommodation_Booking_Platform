@@ -12,6 +12,7 @@ namespace Application.DTOs.BookingDTOs
         public DateTime CheckInDate { get; set; }
         public string PaymentStatus { get; set; }
         public string ApproveLink { get; set; }
+        public string OrderId { get; set; }
         public RoomDTO Room { get; set; }
 
 

@@ -99,7 +99,6 @@ namespace Application.Services
                 {
                     BookingId = createdBooking.Id,
                     Amount = await price,
-                    Method = bookingDto.PaymentMethod,
                     Status = PaymentStatus.Pending
                 };
 
@@ -109,6 +108,7 @@ namespace Application.Services
                 BookingResultDTO bookingResult = _mapper.Map<BookingResultDTO>(createdBooking);
                  var createOrderResult= await _paymentServices.InsertAsync(payment);
                 bookingResult.ApproveLink = createOrderResult.ApprovalUrl;
+                bookingResult.OrderId=createOrderResult.OrderId;
                 await transaction.CommitAsync();
 
                 return bookingResult;

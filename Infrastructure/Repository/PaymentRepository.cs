@@ -152,7 +152,10 @@ namespace Infrastructure.Repository
             try
             {
                 var paymentResult = await _payment.CreateOrderAsync((decimal)payment.Amount, "USD");
-                
+
+                payment.ApprovalUrl = paymentResult.ApprovalUrl;
+                payment.OrderId=paymentResult.OrderId;
+                payment.Method=paymentResult.PaymentMethod;
                 await _context.Payments.AddAsync(payment);
 
                 return paymentResult;

@@ -166,7 +166,6 @@ public class BookingServicesTests
             RoomId = Guid.NewGuid(),
             CheckInDate = DateTime.UtcNow.AddDays(1),
             CheckOutDate = DateTime.UtcNow.AddDays(3),
-            PaymentMethod = PaymentMethod.PayPal
         };
         var userGuid = Guid.NewGuid();
 
