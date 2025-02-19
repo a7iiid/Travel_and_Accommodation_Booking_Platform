@@ -5,14 +5,14 @@ using Domain.Model;
 
 namespace Infrastructure.EmailService
 {
-    public class EmailSender
+    public class EmailSender : IEmailSender
     {
         private readonly IConfiguration _configuration;
 
         public EmailSender(IConfiguration configuration)
         {
             _configuration = configuration;
-            
+
         }
         public async Task SendEmail(Email email)
         {
@@ -21,13 +21,13 @@ namespace Infrastructure.EmailService
             var smtpHost = _configuration["Email:SmtpHost"];
             var smtpPort = int.Parse(_configuration["Email:SmtpPort"]);
 
-            using (var smtpClient = new SmtpClient(smtpHost,smtpPort))
+            using (var smtpClient = new SmtpClient(smtpHost, smtpPort))
             {
 
 
                 smtpClient.Credentials = new NetworkCredential(fromEmail, fromPassword);
                 smtpClient.EnableSsl = true;
-                
+
                 var subject = "Payment Successful";
 
                 var body = $@"
