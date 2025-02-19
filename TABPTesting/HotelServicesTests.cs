@@ -119,6 +119,22 @@ namespace TABPTesting
             Assert.IsType<PaginatedList<HotelSearchResult>>(result);
         }
 
+        [Fact]
+        public async Task AddHotelAsync_CreatesNewHotel()
+        {
+            // Arrange
+            var hotelDto = new HotelDTO();
+            var hotelEntity = new Hotel();
+
+            _mockMapper.Setup(m => m.Map<Hotel>(hotelDto))
+                .Returns(hotelEntity);
+
+            // Act
+            await _hotelServices.AddHotelAsync(hotelDto);
+
+            // Assert
+            _mockHotelRepo.Verify(r => r.InsertAsync(hotelEntity), Times.Once);
+        }
 
     }
 }
