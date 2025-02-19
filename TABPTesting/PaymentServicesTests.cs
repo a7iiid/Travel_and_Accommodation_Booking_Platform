@@ -114,5 +114,24 @@ namespace TABPTesting
             Assert.Null(result);
         }
 
+        [Fact]
+        public async Task UpdatePaymentAsync_UpdatesExistingPayment()
+        {
+            //Arrange
+            var paymentId = Guid.NewGuid();
+            var existingPayment = new Payment { Id = paymentId };
+            var paymentDto = new PaymentDTO();
+
+            _mockPaymentRepo.Setup(r => r.GetByIdAsync(paymentId))
+                .ReturnsAsync(existingPayment);
+
+            //Act
+            await _paymentServices.UpdatePaymentAsync(paymentId, paymentDto);
+
+            //Assert
+            _mockPaymentRepo.Verify(r => r.UpdateAsync(existingPayment, paymentId), Times.Once);
+        }
+
+
         }
 }
