@@ -62,5 +62,16 @@ namespace TABPTesting
 
         }
 
+        [Fact]
+        public async Task GetPaymentByIdAsync_ReturnPaymentDTO_WhenPaymentNotExist()
+        {
+            //Arrange
+            var paymentId= Guid.NewGuid();
+            _mockPaymentRepo.Setup(r => r.GetByIdAsync(paymentId))
+                .ReturnsAsync((Payment)null);
+            //Act & Assert
+            await Assert.ThrowsAsync<KeyNotFoundException>(
+                               () => _paymentServices.GetPaymentByIdAsync(paymentId));
+        }
     }
 }
