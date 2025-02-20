@@ -3,6 +3,7 @@ using Application.Services;
 using Domain.Interfaces;
 using Infrastructure.Auth;
 using Infrastructure.Auth.password;
+using Infrastructure.EmailService;
 using Infrastructure.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using Pay.Interfaces;
@@ -44,6 +45,7 @@ namespace Application
 
             services.AddScoped<PayPalGateWay>();
             services.AddScoped<IPaymentGateway, PayPalGateWay>();
+            services.AddTransient<IEmailSender, EmailSender>(); 
 
 
 

@@ -5,22 +5,29 @@ using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
 using Infrastructure.DB;
+using Infrastructure.EmailService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Pay.Interfaces;
+using System.Security.Claims;
 
 namespace Infrastructure.Repository
 {
     public class PaymentRepository : IPaymentRepository
     {
+        private readonly IEmailSender _emailSender;
         private readonly ApplicationDbContext _context;
         private readonly ILogger<PaymentRepository> _logger;
         private readonly IPaymentGateway _paymentGateway;
-        public PaymentRepository(ApplicationDbContext context,IPaymentGateway payment,ILogger<PaymentRepository>logger)
+        public PaymentRepository(ApplicationDbContext context
+                                    ,IPaymentGateway payment
+                                ,ILogger<PaymentRepository>logger,
+                                IEmailSender emailSender)
         {
             _context= context ?? throw new ArgumentNullException(nameof(context));
             _paymentGateway = payment ?? throw new ArgumentNullException(nameof(payment));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _emailSender=emailSender ?? throw new ArgumentNullException(nameof(emailSender));
             
         }
         public async Task<Payment> GetByIdAsync(Guid id)
@@ -146,6 +153,8 @@ namespace Infrastructure.Repository
                 payment.OrderId=paymentResult.OrderId;
                 payment.Method=paymentResult.PaymentMethod;
                 await _context.Payments.AddAsync(payment);
+                
+                await SaveChangesAsync();
 
                 return paymentResult;
             }
@@ -163,6 +172,24 @@ namespace Infrastructure.Repository
             try
             {
                 var payment = await _context.Payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
+                
+                if(paymentStatus == PaymentStatus.Completed)
+                {
+                    var booking = await _context
+                                    .Bookings.Include(b => b.User)
+                                    .FirstOrDefaultAsync(b => b.Id == payment.BookingId);
+                    var email = new Email
+                    {
+                        Amount = payment.Amount,
+                        BookingId = payment.BookingId,
+                        FirstName = booking.User.FirstName + " " + booking.User.LastName,
+                        ToEmail = booking.User.Email
+
+
+                    };
+                    await _emailSender.SendEmail(email);
+
+                }
                 if (payment != null)
                 {
                     payment.Status = paymentStatus;

@@ -1,5 +1,6 @@
 ﻿using Application.Services;
 using Domain.Enum;
+using Domain.Model;
 using Infrastructure.DB;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
