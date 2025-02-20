@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.PaymentDTOs;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
@@ -73,11 +74,11 @@ namespace Application.Services
             return await _paymentRepository.DeleteAsync(id);
         }
 
-        public async Task<bool> VerifyAndUpdatePaymentStatusAsync(string orderId)
+        public async Task VerifyAndUpdatePaymentStatusAsync(string orderId,PaymentStatus paymentStatus)
         {
             try
             {
-                return await _paymentRepository.VerifyAndUpdatePaymentStatusAsync(orderId);
+                 await _paymentRepository.UpdatePaymentStatusWebHookAsync(orderId,paymentStatus);
             }
             catch (Exception ex)
             {

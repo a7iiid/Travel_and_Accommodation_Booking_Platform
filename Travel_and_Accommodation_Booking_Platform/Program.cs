@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using Application;
 using Application.profile;
 using Application.Services;
 using Domain.Entities;
@@ -95,40 +96,7 @@ services.AddAuthorization(options =>
         policy.RequireClaim("isAdmin", "True");
     }));
 
-services.AddScoped<IPasswordHasher, PasswordHasher>();
-services.AddScoped<IRepository<User>, UserRepository>();
-services.AddScoped<IAuthUser, AuthUser>();
-services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
-services.AddScoped<UserService>();
-services.AddScoped<ICityRepository, CityRepository>();
-services.AddScoped<CityServices>();
-
-services.AddScoped<HotelRepository>();
-builder.Services.AddScoped<IHotelRepository, HotelRepository>();
-services.AddScoped<HotelServices>();
-
-services.AddScoped<IRepository<Room>, RoomRepository>();
-services.AddScoped<RoomRepository>();
-
-services.AddScoped<IRepository<Booking>, BookingRepository>();
-services.AddScoped<BookingRepository>();
-services.AddScoped<BookingServices>();
-
-builder.Services.AddScoped<PaymentServices>();
-
-
-builder.Services.AddScoped<PayPalService>();
-builder.Services.AddScoped<IPaymentGateway, PayPalService>();
-
-
-
-builder.Services.AddAutoMapper(typeof(CityProfile));
-builder.Services.AddAutoMapper(typeof(UserProfile));
-builder.Services.AddAutoMapper(typeof(HotelProfile));
-builder.Services.AddAutoMapper(typeof(RoomProfile));
-builder.Services.AddAutoMapper(typeof(BookingProfile));
-
-
+services.AddApplicationCollection();
 
 
 

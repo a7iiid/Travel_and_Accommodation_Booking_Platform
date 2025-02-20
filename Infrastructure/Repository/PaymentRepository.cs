@@ -156,27 +156,26 @@ namespace Infrastructure.Repository
                 }
         }
 
-        public async Task<bool> VerifyAndUpdatePaymentStatusAsync(string orderId)
+        public async Task UpdatePaymentStatusWebHookAsync(string orderId,PaymentStatus paymentStatus)
         {
-            var order = await _paymentGateway.GetOrderStatusAsync(orderId);
+            _logger.LogInformation($"Received PayPal Webhook");
 
-            if (order == null)
-            {
-                throw new PaymentException("Failed to retrieve order details.");
-            }
-
-            if (order.Status == "COMPLETED")
+            try
             {
                 var payment = await _context.Payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
                 if (payment != null)
                 {
-                    payment.Status = PaymentStatus.Completed;
-                    await _context.SaveChangesAsync();
-                    return true;
+                    payment.Status = paymentStatus;
+                    await SaveChangesAsync();
+                    _logger.LogInformation($"Payment {orderId} marked as COMPLETED.");
                 }
             }
+            catch(Exception ex)
+            {
+                _logger.LogError($"Error processing PayPal Webhook: {ex.Message}");
 
-            return false;
+            }
+
         }
 
     }
