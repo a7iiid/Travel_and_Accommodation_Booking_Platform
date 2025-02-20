@@ -169,5 +169,25 @@ namespace API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        /// <summary>
+        /// return recently visited hotels
+        /// </summary>
+        /// <param name="pageNum">page number</param>
+        /// <param name="pageSize">page size</param>
+        /// <returns></returns>
+        [HttpGet("Get-Recently-Visited-Hotel")]
+        public async Task<IActionResult> GetRecentlyVisitedHotel(int pageNum=1,int pageSize=5)
+        {
+            var userId=User.FindFirst("Id")?.Value;
+            Guid.TryParse(userId, out var userGuid);
+            var booking=await _bookingServices.GetRecentlyVisitedHotelsAsync(userGuid, pageNum,pageSize);
+            if(booking==null)
+            {
+                return NotFound($"Booking with ID {userId} not found.");
+            }
+            return Ok(booking);
+        }
+
+
     }
 }

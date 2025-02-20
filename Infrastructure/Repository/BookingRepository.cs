@@ -169,5 +169,29 @@ namespace Infrastructure.Repository
             }
         }
 
+        public async Task<PaginatedList<Hotel>> GetRecentlyVisitedHotelsAsync(Guid userId, int pageNumber, int pageSize)
+        {
+            try
+            {
+                var hotels = (from booking in _context.Bookings
+                                join room in _context.Rooms on booking.RoomId equals room.Id
+                                join roomType in _context.RoomTypes on room.RoomTypeId equals roomType.Id
+                                join hotel in _context.Hotels on roomType.HotelId equals hotel.Id
+                                where booking.UserId == userId
+                                orderby booking.CheckInDate descending
+                                select hotel).Distinct()
+                                .ToListAsync();
+
+                PageData pageData = new PageData(hotels.Result.Count, pageSize, pageNumber);
+
+                return new PaginatedList<Hotel>(hotels.Result, pageData);
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error fetching recently visited hotels: {ex.Message}");
+                throw new DataAccessException("An error occurred while fetching the recently visited hotels.", ex);
+            }
+        }
     }
 }

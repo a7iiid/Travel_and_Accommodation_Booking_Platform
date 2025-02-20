@@ -7,6 +7,7 @@ using Domain.Exceptions;
 using Application.DTOs.PaymentDTOs;
 using Infrastructure.DB;
 using Domain.Interfaces;
+using Domain.Model;
 
 namespace Application.Services
 {
@@ -183,5 +184,11 @@ namespace Application.Services
 
             return await _bookingRepository.DeleteAsync(bookingId);
         }
+
+        public async Task<PaginatedList<Hotel>> GetRecentlyVisitedHotelsAsync(Guid userId, int pageNumber, int pageSize)
+        {
+            return await _bookingRepository.GetRecentlyVisitedHotelsAsync(userId, pageNumber, pageSize);
+        }
+
     }
 }

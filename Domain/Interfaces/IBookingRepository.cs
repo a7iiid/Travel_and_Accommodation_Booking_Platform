@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Model;
 
 namespace Domain.Interfaces
 {
@@ -11,6 +12,8 @@ namespace Domain.Interfaces
         Task<bool> DeleteAsync(Guid id);
         Task<bool> IsExistsAsync(Guid id);
         Task UpdateAsync(Booking booking, Guid id);
+        Task<PaginatedList<Hotel>> GetRecentlyVisitedHotelsAsync(Guid userId, int pageNumber, int pageSize);
+
         Task SaveChangesAsync();
     }
 }
