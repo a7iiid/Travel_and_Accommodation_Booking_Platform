@@ -9,13 +9,13 @@ using System.Net;
 
 
 
-public class PayPalService : IPaymentGateway
+public class PayPalGateWay : IPaymentGateway
 {
     private readonly PayPalHttpClient _client;
     private readonly string _returnUrl;
     private readonly string _cancelUrl;
 
-    public PayPalService(IConfiguration config)
+    public PayPalGateWay(IConfiguration config)
     {
         var clientId = config["PayPal:ClientId"];
         var secret = config["PayPal:Secret"];
@@ -76,24 +76,6 @@ public class PayPalService : IPaymentGateway
         }
     }
 
-    public async Task<Order?> GetOrderStatusAsync(string orderId)
-    {
-        try
-        {
-            var request = new OrdersGetRequest(orderId);
-            var response = await _client.Execute(request);
-
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new PaymentException($"PayPal API error: {response.StatusCode}");
-            }
-
-            return response.Result<Order>();
-        }
-        catch (HttpException ex)
-        {
-            throw new PaymentException($"PayPal API error: {ex.Message}", ex);
-        }
-    }
+    
 
 }

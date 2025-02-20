@@ -42,8 +42,8 @@ namespace Application
             services.AddScoped<PaymentServices>();
 
 
-            services.AddScoped<PayPalService>();
-            services.AddScoped<IPaymentGateway, PayPalService>();
+            services.AddScoped<PayPalGateWay>();
+            services.AddScoped<IPaymentGateway, PayPalGateWay>();
 
 
 

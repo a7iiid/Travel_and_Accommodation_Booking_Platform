@@ -36,23 +36,7 @@ namespace Presentation.Controllers
             }
         }
 
-        [HttpGet("verify-payment")]
-        public async Task<IActionResult> VerifyPayment([FromQuery] string orderId)
-        {
-            if (string.IsNullOrEmpty(orderId))
-            {
-                return BadRequest("Invalid order ID.");
-            }
-
-            var success = await _paymentService.VerifyAndUpdatePaymentStatusAsync(orderId);
-
-            if (success)
-            {
-                return Ok("Payment verified and updated successfully.");
-            }
-
-            return BadRequest("Payment verification failed.");
-        }
+        
 
     }
 }

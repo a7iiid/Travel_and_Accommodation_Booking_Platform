@@ -13,6 +13,6 @@ namespace Domain.Interfaces
         Task<Payment> GetByIdAsync(Guid id);
         Task SaveChangesAsync();
         Task UpdateAsync(Payment Payment, Guid id);
-        Task<bool> UpdatePaymentStatusWebHookAsync(string orderId,PaymentStatus paymentStatus);
+        Task UpdatePaymentStatusWebHookAsync(string orderId,PaymentStatus paymentStatus);
     }
 }
