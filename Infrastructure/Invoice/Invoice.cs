@@ -68,7 +68,7 @@ namespace Infrastructure.Invoice
 
 
                                 table.Cell().Background(Colors.Grey.Lighten4).Padding(5).Text(email.Booking.Room.Id);
-                                table.Cell().Background(Colors.Grey.Lighten4).Padding(5).Text(email.Booking.Room.RoomType);
+                                table.Cell().Background(Colors.Grey.Lighten4).Padding(5).Text(email.Booking.Room.RoomType.Category);
                                 table.Cell().Background(Colors.Grey.Lighten4).Padding(5)
                                     .Text(email.Booking.CheckInDate.ToString("dd/MM/yyyy"));
                                 table.Cell().Background(Colors.Grey.Lighten4).Padding(5)

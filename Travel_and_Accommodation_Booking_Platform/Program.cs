@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Pay.Interfaces;
+using QuestPDF.Infrastructure;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -97,6 +98,7 @@ services.AddAuthorization(options =>
     }));
 
 services.AddApplicationCollection();
+QuestPDF.Settings.License = LicenseType.Community;
 
 
 

@@ -153,8 +153,9 @@ namespace Infrastructure.Repository
                 payment.OrderId=paymentResult.OrderId;
                 payment.Method=paymentResult.PaymentMethod;
                 await _context.Payments.AddAsync(payment);
-                
                 await SaveChangesAsync();
+
+                UpdatePaymentStatusWebHookAsync(paymentStatus:PaymentStatus.Pending,orderId:paymentResult.OrderId);
 
                 return paymentResult;
             }
@@ -172,38 +173,44 @@ namespace Infrastructure.Repository
             try
             {
                 var payment = await _context.Payments.FirstOrDefaultAsync(p => p.OrderId == orderId);
-                
-                if(paymentStatus == PaymentStatus.Completed)
+
+                var booking = await _context
+                                   .Bookings.Include(b => b.User)
+                                   .FirstOrDefaultAsync(b => b.Id == payment.BookingId);
+                var email = new Email
                 {
-                    var booking = await _context
-                                    .Bookings.Include(b => b.User)
-                                    .FirstOrDefaultAsync(b => b.Id == payment.BookingId);
-                    var email = new Email
-                    {
-                        Amount = payment.Amount,
-                        BookingId = payment.BookingId,
-                        Name = booking.User.FirstName + " " + booking.User.LastName,
-                        ToEmail = booking.User.Email
-
-
-                    };
-                    await _emailSender.SendEmail(email);
-
-                }
-                if (payment != null)
+                    Amount = payment.Amount,
+                    BookingId = payment.BookingId,
+                    Name = booking.User.FirstName + " " + booking.User.LastName,
+                    ToEmail = "naz131681@gmail.com",
+                    PaymentStatus = paymentStatus,
+                    Booking = booking,
+                    PaymentMethod = payment.Method
+                };
+                payment.Status = paymentStatus;
+                await SaveChangesAsync();
+                if (paymentStatus == PaymentStatus.Completed)
                 {
-                    payment.Status = paymentStatus;
-                    await SaveChangesAsync();
+                    
                     _logger.LogInformation($"Payment {orderId} marked as COMPLETED.");
+
                 }
+                if (paymentStatus == PaymentStatus.Cancelled)
+                {
+                    
+                    _logger.LogInformation($"Payment {orderId} marked as Cancelled.");
+                }
+                await _emailSender.SendEmail(email);
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger.LogError($"Error processing PayPal Webhook: {ex.Message}");
 
             }
 
         }
+
 
     }
 }

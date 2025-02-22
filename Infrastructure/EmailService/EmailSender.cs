@@ -2,17 +2,20 @@
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using Domain.Model;
+using Infrastructure.Invoice;
 
 namespace Infrastructure.EmailService
 {
     public class EmailSender : IEmailSender
     {
         private readonly IConfiguration _configuration;
+        private readonly IInvoice _invoice;
 
-        public EmailSender(IConfiguration configuration)
+
+        public EmailSender(IConfiguration configuration, IInvoice invoice)
         {
             _configuration = configuration;
-
+            _invoice = invoice;
         }
         public async Task SendEmail(Email email)
         {
@@ -21,9 +24,10 @@ namespace Infrastructure.EmailService
             var smtpHost = _configuration["Email:SmtpHost"];
             var smtpPort = int.Parse(_configuration["Email:SmtpPort"]);
 
+            var pdfInvoice = _invoice.GenerateInvoiceAsync(email);
+
             using (var smtpClient = new SmtpClient(smtpHost, smtpPort))
             {
-
 
                 smtpClient.Credentials = new NetworkCredential(fromEmail, fromPassword);
                 smtpClient.EnableSsl = true;
@@ -45,6 +49,9 @@ namespace Infrastructure.EmailService
                     Body = body,
                     IsBodyHtml = true,
                 };
+
+                var pdfAttachment = new Attachment(new MemoryStream(pdfInvoice), "Invoice.pdf", "application/pdf");
+                mailMessage.Attachments.Add(pdfAttachment);
 
                 mailMessage.To.Add(email.ToEmail);
 
