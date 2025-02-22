@@ -29,13 +29,13 @@ namespace Presentation.Controllers
                 string eventType = payload["event_type"]?.ToString();
                 string orderId = payload["resource"]["id"]?.ToString();
                 string paymentStatus = payload["resource"]["status"]?.ToString();
-                if (eventType == "PAYMENT.CAPTURE.COMPLETED")
+                if (eventType.Equals("PAYMENT.CAPTURE.COMPLETED", StringComparison.OrdinalIgnoreCase))
                 {
-                    
 
-                   await _paymentServices.VerifyAndUpdatePaymentStatusAsync(orderId, PaymentStatus.Completed);
+
+                    await _paymentServices.VerifyAndUpdatePaymentStatusAsync(orderId, PaymentStatus.Completed);
                 }
-                else if (eventType == "PAYMENT.CAPTURE.DENIED")
+                if (eventType.Equals("PAYMENT.CAPTURE.DENIED", StringComparison.OrdinalIgnoreCase))
                 {
                     await _paymentServices.VerifyAndUpdatePaymentStatusAsync(orderId, PaymentStatus.Cancelled);
 
@@ -45,7 +45,7 @@ namespace Presentation.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex);
             }
         }
     }

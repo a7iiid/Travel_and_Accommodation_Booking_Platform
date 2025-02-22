@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Auth.model
 {
-    public record User
+    public record UserResultModel
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; }

@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using Presentation.model;
+using Application.DTOs;
 
 namespace Presentation.Validetors.AuthentcationValdetors
 {
-    public class AuthenticationRequestBodyValidator : AbstractValidator<AuthenticationRequestBody>
+    public class AuthenticationRequestValidator : AbstractValidator<AuthenticationRequestDTO>
     {
-        public AuthenticationRequestBodyValidator()
+        public AuthenticationRequestValidator()
         {
             RuleFor(auth => auth.Email)
                 .NotEmpty().WithMessage("Email is required.")

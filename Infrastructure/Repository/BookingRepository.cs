@@ -1,11 +1,12 @@
 ﻿using Domain.Entities;
+using Domain.Enum;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Xml.Linq;
+using System.Data;
 
 
 namespace Infrastructure.Repository
@@ -14,12 +15,14 @@ namespace Infrastructure.Repository
     {
         private readonly ApplicationDbContext _context;
         private readonly ILogger<BookingRepository> _logger;
+        private readonly IPaymentRepository _paymentRepository;
 
-        public BookingRepository(ApplicationDbContext context, ILogger<BookingRepository> logger)
+        public BookingRepository(ApplicationDbContext context, ILogger<BookingRepository> logger,IPaymentRepository paymentRepository)
             
         {
             _context = context;
             _logger = logger;
+            _paymentRepository = paymentRepository;
         }
 
     
@@ -79,17 +82,52 @@ namespace Infrastructure.Repository
             }
         }
 
-        public  async Task<Booking> InsertAsync(Booking booking)
+        public  async Task<BookingResult> InsertAsync(Booking booking)
         {
             if (!await CanBookRoom(booking.RoomId, booking.CheckInDate, booking.CheckOutDate))
             {
                 _logger.LogWarning("Room not available for selected dates");
                 throw new BookingConflictException("Room is already booked for the selected dates.");
             }
+            await using var transaction = await _context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+            ;
+            try
+            {
+                // Create payment
+                Payment payment = new Payment
+                {
+                    BookingId = booking.Id,
+                    Amount = booking.Price,
+                    Status = PaymentStatus.Pending
+                };
+                await _context.AddAsync(booking);
+                await SaveChangesAsync();
 
-            await _context.AddAsync(booking);
-            await SaveChangesAsync();
-            return booking;
+                var createOrderResult = await _paymentRepository.InsertAsync(payment);
+                await transaction.CommitAsync();
+
+                return new BookingResult
+                {
+                    Id=booking.Id,
+                    ApproveLink = createOrderResult.ApprovalUrl,
+                    OrderId = createOrderResult.OrderId,
+                    CheckInDate=booking.CheckInDate,
+                    PaymentStatus = payment.Status.ToString(),
+                    Room = booking.Room,
+                    
+                };
+
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                throw new InvalidOperationException("Failed to create booking");
+
+            }
+            
+
+           
+           
         }
         public async Task SaveChangesAsync()
         {

@@ -12,7 +12,7 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize] // Ensure the user is authenticated
+    [Authorize] 
     public class BookingController : ControllerBase
     {
         private readonly BookingServices _bookingServices;
@@ -175,7 +175,7 @@ namespace API.Controllers
         /// <param name="pageNum">page number</param>
         /// <param name="pageSize">page size</param>
         /// <returns></returns>
-        [HttpGet("Get-Recently-Visited-Hotel")]
+        [HttpGet("Recently-Visited-Hotel")]
         public async Task<IActionResult> GetRecentlyVisitedHotel(int pageNum=1,int pageSize=5)
         {
             var userId=User.FindFirst("Id")?.Value;

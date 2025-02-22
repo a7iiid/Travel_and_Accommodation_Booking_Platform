@@ -3,6 +3,7 @@ using Application.Services;
 using Application.Validators;
 using Domain.Entities;
 using Domain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Presentation.Validetors.cityValidetors;
 
@@ -10,7 +11,7 @@ namespace Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-   // [Authorize]
+    [Authorize]
     public class CitiesController : ControllerBase
     {
         private readonly CityServices _cityService;
@@ -72,7 +73,7 @@ namespace Presentation.Controllers
         /// <param name="cityDTO">The city data transfer object containing the city details.</param>
         /// <returns>A confirmation message upon successful addition.</returns>
         [HttpPost]
-       // [Authorize("Admin")]
+        [Authorize("Admin")]
         public async Task<IActionResult> AddCity([FromBody] CityDTOForAdd cityDTO)
         {
             var validator = new CityDTOForAddValidetor();
@@ -96,7 +97,7 @@ namespace Presentation.Controllers
         /// <param name="cityDTO">The updated city data transfer object.</param>
         /// <returns>204 No Content on successful update.</returns>
         [HttpPut("{id}")]
-       // [Authorize("Admin")]
+        [Authorize("Admin")]
 
         public async Task<IActionResult> UpdateCity(Guid id, CityDTO cityDTO)
         {
@@ -119,7 +120,7 @@ namespace Presentation.Controllers
         /// <param name="id">Unique identifier of the city to delete.</param>
         /// <returns>204 No Content on successful deletion, or 404 Not Found if the city does not exist.</returns>
         [HttpDelete("{id}")]
-        //[Authorize("Admin")]
+        [Authorize("Admin")]
 
         public async Task<IActionResult> DeleteCity(Guid id)
         {

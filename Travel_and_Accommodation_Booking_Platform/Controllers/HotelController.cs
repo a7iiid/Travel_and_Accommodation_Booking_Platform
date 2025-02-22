@@ -3,12 +3,14 @@ using Application.DTOs.RoomDTOs;
 using Application.Services;
 using Application.Validators;
 using Domain.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class HotelController : Controller
     {
         private readonly HotelServices _hotelService;
@@ -54,7 +56,7 @@ namespace Presentation.Controllers
         /// <param name="hotelDTO">The hotel data transfer object containing the hotel details.</param>
         /// <returns>A confirmation message upon successful addition.</returns>
         [HttpPost]
-      //  [Authorize("Admin")]
+        [Authorize("Admin")]
         public async Task<IActionResult> AddHotel(HotelDTO hotelDTO)
         {
             var validator = new HotelDTOValidator();
@@ -77,7 +79,7 @@ namespace Presentation.Controllers
         /// <param name="hotelDTO">The updated hotel data transfer object.</param>
         /// <returns>No content on successful update.</returns>
         [HttpPut("{id}")]
-      //  [Authorize("Admin")]
+        [Authorize("Admin")]
         public async Task<IActionResult> UpdateHotel(Guid id, HotelDTO hotelDTO)
         {
             var validator = new HotelDTOValidator();
@@ -100,7 +102,7 @@ namespace Presentation.Controllers
         /// <param name="id">The ID of the hotel to delete.</param>
         /// <returns>No content on successful deletion, or Not Found if the hotel does not exist.</returns>
         [HttpDelete("{id}")]
-       // [Authorize("Admin")]
+        [Authorize("Admin")]
         public async Task<IActionResult> DeleteHotel(Guid id)
         {
             var result = await _hotelService.DeleteHotelAsync(id);
@@ -124,7 +126,7 @@ namespace Presentation.Controllers
             var rooms = await _hotelService.GetAvailableRoomsAsync(hotelId, checkInDate, checkOutDate);
             return Ok(rooms);
         }
-        [HttpGet("GetHotelsByOwnerIdAsync")]
+        [HttpGet("Hotels-By-OwnerId")]
         public async Task<IActionResult> GetHotelsByOwner(Guid ownerId, int pageNumber = 1,
             int pageSize = 10)
         {

@@ -1,10 +1,10 @@
 ﻿using Infrastructure.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Domain.Model;
-using Presentation.model;
 using Application.Services;
 using Presentation.Validetors.AuthentcationValdetors;
 using Application.DTOs.UserDTOs;
+using Application.DTOs;
 
 namespace Presentation.Controllers
 {
@@ -12,15 +12,13 @@ namespace Presentation.Controllers
     [Route("api/[controller]")]
     public class AuthenticationController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly ITokenGenerator _tokenGenerator;
+       
         private readonly UserService _userService;
 
 
-        public AuthenticationController(IConfiguration configuration, ITokenGenerator tokenGenerator,UserService userService   )
+        public AuthenticationController(UserService userService   )
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _tokenGenerator = tokenGenerator ?? throw new ArgumentNullException(nameof(tokenGenerator));
+            
             _userService=userService??throw new ArgumentNullException(nameof(userService));
             
         }
@@ -36,10 +34,10 @@ namespace Presentation.Controllers
         /// </returns>
         [HttpPost("sign-in")]
       
-        public async Task<ActionResult<string>> SignIn([FromBody] AuthenticationRequestBody authenticationRequestBody)
+        public async Task<ActionResult<string>> SignIn([FromBody] AuthenticationRequestDTO authenticationRequestBody)
         {
             // Validate the request body 
-            var validator = new AuthenticationRequestBodyValidator();
+            var validator = new AuthenticationRequestValidator();
             var validationResult = validator.Validate(authenticationRequestBody);
             if (!validationResult.IsValid)
             {
@@ -48,30 +46,7 @@ namespace Presentation.Controllers
             }
 
             // Validate user credentials
-            var user = await _tokenGenerator.ValidateUserCredentials(
-                authenticationRequestBody.Email,
-                authenticationRequestBody.Password);
-
-            if (user is null)
-            {
-                return Unauthorized(new { Message = "Invalid email or password." });
-
-            }
-
-            // Configure JWT settings
-            var jwtConfig = new JWTConfig
-            {
-                SecretKey = Environment.GetEnvironmentVariable("SecretKey"),
-                Issuer = Environment.GetEnvironmentVariable("Issuer"),
-                Audience = Environment.GetEnvironmentVariable("Audience"),
-            };
-
-            // Generate the JWT token
-            var token = await _tokenGenerator.GenerateToken(
-                user.Email,
-                authenticationRequestBody.Password,
-                jwtConfig);
-
+            var token = await _userService.AuthenticateUserAsync(authenticationRequestBody);
             return Ok(new { Token = token });
         }
         [HttpPost("register")]

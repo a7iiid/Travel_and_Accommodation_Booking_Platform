@@ -1,11 +1,7 @@
 ﻿using Domain.Entities;
 using Application.DTOs.BookingDTOs;
 using AutoMapper;
-using Infrastructure.Repository;
-using Domain.Enum;
 using Domain.Exceptions;
-using Application.DTOs.PaymentDTOs;
-using Infrastructure.DB;
 using Domain.Interfaces;
 using Domain.Model;
 
@@ -15,22 +11,20 @@ namespace Application.Services
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IRoomRepository _roomRepository;
-        private readonly IPaymentRepository _paymentServices;
-        private readonly ApplicationDbContext _context;
+        private readonly IPaymentRepository _paymentRepository;
 
         private readonly IMapper _mapper;
         public BookingServices(
             IBookingRepository bookingRepository,
             IRoomRepository roomRepository,
-            IPaymentRepository paymentServices,
-            IMapper mapper,
-            ApplicationDbContext context)
+            IPaymentRepository paymentRepository,
+            IMapper mapper
+            )
         {
             _bookingRepository = bookingRepository;
             _roomRepository = roomRepository;
-            _paymentServices = paymentServices;
+            _paymentRepository = paymentRepository;
             _mapper = mapper;
-            _context = context; 
         }
 
         /// <summary>
@@ -66,62 +60,30 @@ namespace Application.Services
         /// </summary>
         /// <param name="bookingDto">The BookingDTO containing booking details.</param>
         /// <returns>The created BookingDTO</returns>
-        public async Task<BookingResultDTO?> CreateBookingAsync(BookingDTOForCreation bookingDto,Guid userGuid)
+        public async Task<BookingResult?> CreateBookingAsync(BookingDTOForCreation bookingDto,Guid userGuid)
         {
 
-            await using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            var price =await CalculateTotalPrice(bookingDto);
+
+            // Create booking
+            var booking = new Booking
+            {
+                RoomId = bookingDto.RoomId,
+                UserId = userGuid,
+                CheckInDate = bookingDto.CheckInDate,
+                CheckOutDate = bookingDto.CheckOutDate,
+                Price =  price,
+                BookingDate = DateTime.UtcNow
+            };
+            // add booking
+            var createdBooking = await _bookingRepository.InsertAsync(booking);
+            if (createdBooking == null)
             {
 
-                var price = CalculateTotalPrice(bookingDto);
-
-                // Create booking
-                var booking = new Booking
-                {
-                    RoomId = bookingDto.RoomId,
-                    UserId = userGuid,
-                    CheckInDate = bookingDto.CheckInDate,
-                    CheckOutDate = bookingDto.CheckOutDate,
-                    Price = await price,
-                    BookingDate = DateTime.UtcNow
-                };
-
-                // add booking
-                var createdBooking = await _bookingRepository.InsertAsync(booking);
-                if (createdBooking == null)
-                {
-
-                    return null;
-
-                }
-
-                // Create payment
-                Payment payment = new Payment
-                {
-                    BookingId = createdBooking.Id,
-                    Amount = await price,
-                    Status = PaymentStatus.Pending
-                };
-
-
-
-
-                BookingResultDTO bookingResult = _mapper.Map<BookingResultDTO>(createdBooking);
-                 var createOrderResult= await _paymentServices.InsertAsync(payment);
-                bookingResult.ApproveLink = createOrderResult.ApprovalUrl;
-                bookingResult.OrderId=createOrderResult.OrderId;
-                await transaction.CommitAsync();
-
-                return bookingResult;
+                return null;
 
             }
-            catch(Exception ex)
-            {   
-                transaction.Rollback();
-                throw new InvalidOperationException("Failed to create booking");
-
-            }
-
+            return createdBooking;
 
         }
 

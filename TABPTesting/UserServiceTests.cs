@@ -5,6 +5,7 @@ using Application.Services;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Auth;
 using Moq;
 using System.Data.SqlTypes;
 
@@ -14,6 +15,7 @@ namespace TABPTesting
     {
         private readonly Mock<IUserRepository> _mockUserRepo;
         private readonly Mock<IPasswordHasher> _mockPasswordHasher;
+        private readonly Mock<ITokenGenerator> _mockTokenGenerator;
         private readonly Mock<IMapper> _mockMapper;
         private readonly UserService _userService;
 
@@ -21,11 +23,15 @@ namespace TABPTesting
         {
             _mockUserRepo = new Mock<IUserRepository>();
             _mockPasswordHasher = new Mock<IPasswordHasher>();
+            _mockTokenGenerator = new Mock<ITokenGenerator>();
             _mockMapper = new Mock<IMapper>();
             _userService = new UserService(
                                 _mockUserRepo.Object, 
                                 _mockPasswordHasher.Object, 
-                                _mockMapper.Object);
+                                _mockMapper.Object,
+                                _mockTokenGenerator.Object
+
+                                );
         }
         [Fact]
         public async Task RegisterUserAsync_ShouldCreateUserWithHashedPassword_WhenValidDto()

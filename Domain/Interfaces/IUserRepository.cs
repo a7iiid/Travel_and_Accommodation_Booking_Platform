@@ -1,5 +1,6 @@
 ﻿
 using Domain.Entities;
+using Infrastructure.Auth.model;
 
 namespace Domain.Interfaces
 {
@@ -12,5 +13,8 @@ namespace Domain.Interfaces
         Task<bool> IsExistsAsync(Guid id);
         Task SaveChangesAsync();
         Task UpdateAsync(User User, Guid id);
+        public Task<UserResultModel?> GetUserByEmailAsync(string email);
+
+
     }
 }

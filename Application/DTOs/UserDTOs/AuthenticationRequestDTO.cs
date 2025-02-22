@@ -1,6 +1,6 @@
-﻿namespace Presentation.model
+﻿namespace Application.DTOs
 {
-    public class AuthenticationRequestBody
+    public class AuthenticationRequestDTO
     {
         public string Email { get; set; }
         public string Password { get; set; }

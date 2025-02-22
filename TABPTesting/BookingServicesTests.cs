@@ -18,7 +18,6 @@ public class BookingServicesTests
     private readonly Mock<IRoomRepository> _mockRoomRepo;
     private readonly Mock<IPaymentRepository> _mockPaymentRepo;
     private readonly Mock<IMapper> _mockMapper;
-    private readonly ApplicationDbContext _context; 
     private readonly BookingServices _bookingServices;
 
     public BookingServicesTests()
@@ -26,7 +25,6 @@ public class BookingServicesTests
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseInMemoryDatabase(databaseName: "TestDb")
             .Options;
-        _context = new ApplicationDbContext(options);
 
         _mockBookingRepo = new Mock<IBookingRepository>();
         _mockRoomRepo = new Mock<IRoomRepository>();
@@ -37,8 +35,7 @@ public class BookingServicesTests
             _mockBookingRepo.Object,
             _mockRoomRepo.Object,
             _mockPaymentRepo.Object,
-            _mockMapper.Object,
-            _context 
+            _mockMapper.Object
         );
     }
 

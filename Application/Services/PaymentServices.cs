@@ -5,8 +5,6 @@ using Domain.Enum;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
-using Infrastructure.Repository;
-using Pay.Interfaces;
 
 namespace Application.Services
 {

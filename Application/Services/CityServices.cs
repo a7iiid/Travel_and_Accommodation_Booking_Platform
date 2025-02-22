@@ -4,7 +4,6 @@ using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
-using Infrastructure.Repository;
 
 namespace Application.Services
 {

@@ -1,12 +1,10 @@
 ﻿
 
 using Application.DTOs.HotelDTOs;
-using Application.DTOs.RoomDTOs;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Model;
-using Infrastructure.Repository;
 
 namespace Application.Services
 {

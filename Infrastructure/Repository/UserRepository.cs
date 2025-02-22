@@ -3,9 +3,12 @@
 using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
+using Domain.Model;
+using Infrastructure.Auth.model;
 using Infrastructure.DB;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+
 
 namespace Infrastructure.Repository
 {
@@ -152,6 +155,27 @@ namespace Infrastructure.Repository
             }
         }
 
+        public async Task<UserResultModel?> GetUserByEmailAsync(string email)
+        {
+            var user = await _context
+                .Users
+                .SingleOrDefaultAsync(u => u.Email.Equals(email));
+
+            if (user is null)
+            {
+                return null;
+            }
+            return new UserResultModel
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                Password = user.PasswordHash,
+                IsAdmin = user.isAdmin,
+                Salt = user.Salt
+            };
+        }
 
     }
 

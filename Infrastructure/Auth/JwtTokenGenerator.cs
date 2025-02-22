@@ -7,28 +7,30 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Domain.Interfaces;
 
 namespace Infrastructure.Auth
 {
     public class JwtTokenGenerator : ITokenGenerator
     {
-        private readonly IAuthUser _authUser;
+        private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordGenerator;
         private readonly IConfiguration _configuration;
 
-        public JwtTokenGenerator(IAuthUser authUser, IPasswordHasher passwordGenerator, IConfiguration configuration)
+        public JwtTokenGenerator(IUserRepository authUser, IPasswordHasher passwordGenerator, IConfiguration configuration)
         {
-            _authUser = authUser;
+            _userRepository = authUser;
             _passwordGenerator = passwordGenerator;
             _configuration = configuration;
         }
 
-        public async Task<string> GenerateToken(string email, string password,JWTConfig jWTConfig)
+        public async Task<string> GenerateToken(string email, string password)
         {
             var user = await ValidateUserCredentials(email, password);
+               
 
             var key = new SymmetricSecurityKey
-                        (Encoding.UTF8.GetBytes(jWTConfig.SecretKey));
+                        (Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SecretKey")));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claimsForToken = new List<Claim>
@@ -41,8 +43,8 @@ namespace Infrastructure.Auth
         };
 
             var jwtSecurityToken = new JwtSecurityToken(
-                jWTConfig.Issuer,
-                 jWTConfig.Audience,
+                 Environment.GetEnvironmentVariable("Issuer"),
+                 Environment.GetEnvironmentVariable("Audience"),
                 claimsForToken,
                 DateTime.UtcNow,
                 DateTime.UtcNow
@@ -52,9 +54,9 @@ namespace Infrastructure.Auth
             return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
 
-        public async Task<User?> ValidateUserCredentials(string email, string password)
+        public async Task<UserResultModel?> ValidateUserCredentials(string email, string password)
         {
-            var user = await _authUser.GetUserAsync(email);
+            var user = await _userRepository.GetUserByEmailAsync(email);
             if (user is null)
             {
                 return null;

@@ -1,21 +1,12 @@
 using System.Reflection;
 using System.Text;
 using Application;
-using Application.profile;
-using Application.Services;
-using Domain.Entities;
-using Domain.Interfaces;
-using DotNetEnv;
-using Infrastructure.Auth;
-using Infrastructure.Auth.password;
 using Infrastructure.DB;
-using Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Pay.Interfaces;
 using QuestPDF.Infrastructure;
 using Serilog;
 
