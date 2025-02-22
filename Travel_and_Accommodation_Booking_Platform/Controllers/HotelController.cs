@@ -1,4 +1,5 @@
-﻿using Application.DTOs.HotelDTOs;
+﻿using Application.DTOs;
+using Application.DTOs.HotelDTOs;
 using Application.DTOs.RoomDTOs;
 using Application.Services;
 using Application.Validators;

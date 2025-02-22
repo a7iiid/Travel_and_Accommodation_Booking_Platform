@@ -1,4 +1,6 @@
-﻿using Application.DTOs.RoomDTOs;
+﻿using Application.DTOs;
+using Application.DTOs;
+using Application.DTOs.RoomDTOs;
 using AutoMapper;
 using Domain.Entities;
 using System;

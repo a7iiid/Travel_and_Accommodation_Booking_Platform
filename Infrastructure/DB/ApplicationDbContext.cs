@@ -24,15 +24,6 @@ namespace Infrastructure.DB
         public DbSet<RoomAmenity> RoomAmenities { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.ApplyConfiguration(new BookingConfiguration());
-            //modelBuilder.ApplyConfiguration(new CityConfiguration());
-            //modelBuilder.ApplyConfiguration(new HotelConfiguration());
-            //modelBuilder.ApplyConfiguration(new PaymentConfiguration());
-            //modelBuilder.ApplyConfiguration(new ReviewConfiguration());
-            //modelBuilder.ApplyConfiguration(new RoomConfiguration());
-            //modelBuilder.ApplyConfiguration(new RoomTypeConfiguration());
-            //modelBuilder.ApplyConfiguration(new UserConfiguration());
-
             modelBuilder.SeedTables();
             base.OnModelCreating(modelBuilder);
         }

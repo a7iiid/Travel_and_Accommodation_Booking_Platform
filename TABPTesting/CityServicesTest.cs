@@ -6,8 +6,6 @@ using Domain.Entities;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Model;
-using Infrastructure.DB;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 
 namespace TABPTesting
@@ -24,10 +22,7 @@ namespace TABPTesting
             _mockMapper = new Mock<IMapper>();
 
             
-            _cityServices = new CityServices(
-                               _mockCityRepo.Object,
-                                              _mockMapper.Object
-                                                         );
+            _cityServices = new CityServices(_mockCityRepo.Object, _mockMapper.Object );
         }
 
         [Fact]

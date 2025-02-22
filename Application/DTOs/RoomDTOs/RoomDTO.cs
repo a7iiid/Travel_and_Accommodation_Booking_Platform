@@ -2,7 +2,7 @@
 
 using Domain.Entities;
 
-namespace Domain.Model;
+namespace Application.DTOs;
 
 public record RoomDTO
 {

@@ -1,12 +1,20 @@
 using System.Reflection;
 using System.Text;
 using Application;
+using Application.Services;
+using Domain.Interfaces;
+using Infrastructure.Auth;
+using Infrastructure.Auth.password;
 using Infrastructure.DB;
+using Infrastructure.EmailService;
+using Infrastructure.Invoice;
+using Infrastructure.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Pay.Interfaces;
 using QuestPDF.Infrastructure;
 using Serilog;
 
@@ -20,8 +28,14 @@ DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 services.AddControllers(options =>
 {
     options.ReturnHttpNotAcceptable = false;
-}).AddNewtonsoftJson()
+}).AddNewtonsoftJson(
+    options =>
+    {
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+    })
   .AddXmlDataContractSerializerFormatters();
+
+
 
 services.AddEndpointsApiExplorer();
 
@@ -30,24 +44,7 @@ services.AddSwaggerGen(setupAction =>
     var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
     setupAction.IncludeXmlComments(xmlCommentsFullPath);
-    setupAction.AddSecurityDefinition("TAABPApiAuth", new OpenApiSecurityScheme()
-    {
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        Description = "Input a valid token to access this API"
-    });
-    setupAction.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme{
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "TAABPApiAuth"}
-            },
-            new List<string>()
-        }
-    });
+   
 });
 
 
@@ -60,10 +57,10 @@ services.AddAuthentication("Bearer").AddJwtBearer(
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["JWT:Issuer"],
-            ValidAudience = builder.Configuration["JWT:Audience"],
+            ValidIssuer = Environment.GetEnvironmentVariable("Issuer"),
+            ValidAudience = Environment.GetEnvironmentVariable("Audience"),
             IssuerSigningKey =
-                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JWT:SecretKey"]))
+                new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("SecretKey")))
         };
     });
 
@@ -93,7 +90,34 @@ services.AddAuthorization(options =>
 services.AddApplicationCollection();
 QuestPDF.Settings.License = LicenseType.Community;
 
+services.AddTransient<IPasswordHasher, PasswordHasher>();
+services.AddScoped<IUserRepository, UserRepository>();
+services.AddTransient<ITokenGenerator, JwtTokenGenerator>();
+services.AddScoped<UserService>();
+services.AddScoped<ICityRepository, CityRepository>();
+services.AddScoped<CityServices>();
 
+services.AddScoped<HotelRepository>();
+services.AddScoped<IHotelRepository, HotelRepository>();
+services.AddScoped<HotelServices>();
+
+services.AddScoped<IRoomRepository, RoomRepository>();
+services.AddScoped<RoomRepository>();
+
+services.AddScoped<IBookingRepository, BookingRepository>();
+services.AddScoped<BookingRepository>();
+services.AddScoped<BookingServices>();
+services.AddScoped<IPaymentRepository, PaymentRepository>();
+services.AddScoped<PaymentRepository>();
+
+services.AddScoped<PaymentServices>();
+
+
+services.AddScoped<PayPalGateWay>();
+services.AddScoped<IPaymentGateway, PayPalGateWay>();
+services.AddTransient<IEmailSender, EmailSender>();
+
+services.AddTransient<IInvoice, Invoice>();
 
 var app = builder.Build();
 app.UseAuthentication();

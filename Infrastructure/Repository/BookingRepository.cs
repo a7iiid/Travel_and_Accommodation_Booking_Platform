@@ -93,6 +93,8 @@ namespace Infrastructure.Repository
             ;
             try
             {
+                await _context.AddAsync(booking);
+                await SaveChangesAsync();
                 // Create payment
                 Payment payment = new Payment
                 {
@@ -100,8 +102,7 @@ namespace Infrastructure.Repository
                     Amount = booking.Price,
                     Status = PaymentStatus.Pending
                 };
-                await _context.AddAsync(booking);
-                await SaveChangesAsync();
+               
 
                 var createOrderResult = await _paymentRepository.InsertAsync(payment);
                 await transaction.CommitAsync();
