@@ -20,7 +20,7 @@ namespace Infrastructure.EmailService
         public async Task SendEmail(Email email)
         {
 
-            var fromEmail =Environment.GetEnvironmentVariable("Email") ;
+            var fromEmail =Environment.GetEnvironmentVariable("FromEmail") ;
             var fromPassword = Environment.GetEnvironmentVariable("FromPassword");
             var smtpHost = Environment.GetEnvironmentVariable("SmtpHost");
             var smtpPort = int.Parse(Environment.GetEnvironmentVariable("SmtpPort"));
