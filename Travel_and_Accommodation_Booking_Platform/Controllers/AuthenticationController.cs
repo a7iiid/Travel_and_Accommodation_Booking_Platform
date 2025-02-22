@@ -35,9 +35,7 @@ namespace Presentation.Controllers
         /// otherwise, returns validation errors or unauthorized status.
         /// </returns>
         [HttpPost("sign-in")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+      
         public async Task<ActionResult<string>> SignIn([FromBody] AuthenticationRequestBody authenticationRequestBody)
         {
             // Validate the request body 
@@ -63,9 +61,9 @@ namespace Presentation.Controllers
             // Configure JWT settings
             var jwtConfig = new JWTConfig
             {
-                SecretKey = _configuration["JWT:SecretKey"],
-                Issuer = _configuration["JWT:Issuer"],
-                Audience = _configuration["JWT:Audience"],
+                SecretKey = Environment.GetEnvironmentVariable("SecretKey"),
+                Issuer = Environment.GetEnvironmentVariable("Issuer"),
+                Audience = Environment.GetEnvironmentVariable("Audience"),
             };
 
             // Generate the JWT token
@@ -77,8 +75,7 @@ namespace Presentation.Controllers
             return Ok(new { Token = token });
         }
         [HttpPost("register")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        
         public async Task<ActionResult<string>> Register(UserRegisterDTO user)
         {
             try

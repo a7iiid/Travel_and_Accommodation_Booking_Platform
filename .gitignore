@@ -363,5 +363,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-*.json
-/Travel_and_Accommodation_Booking_Platform/appsettings.json
+

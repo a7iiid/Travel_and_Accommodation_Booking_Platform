@@ -5,6 +5,7 @@ using Application.profile;
 using Application.Services;
 using Domain.Entities;
 using Domain.Interfaces;
+using DotNetEnv;
 using Infrastructure.Auth;
 using Infrastructure.Auth.password;
 using Infrastructure.DB;
@@ -22,6 +23,7 @@ var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DBContext")));
+DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
 
 
 services.AddControllers(options =>

@@ -6,6 +6,7 @@ using PayPalCheckoutSdk.Core;
 using PayPalCheckoutSdk.Orders;
 using PayPalHttp;
 using System.Net;
+using System;
 
 
 
@@ -15,18 +16,18 @@ public class PayPalGateWay : IPaymentGateway
     private readonly string _returnUrl;
     private readonly string _cancelUrl;
 
-    public PayPalGateWay(IConfiguration config)
+    public PayPalGateWay()
     {
-        var clientId = config["PayPal:ClientId"];
-        var secret = config["PayPal:Secret"];
+        var clientId = System.Environment.GetEnvironmentVariable("ClientId");
+        var secret = System.Environment.GetEnvironmentVariable("Secret");
 
-        PayPalEnvironment environment = config["PayPal:Environment"]?.ToLower() == "live"
+        PayPalEnvironment environment = System.Environment.GetEnvironmentVariable("Environment")?.ToLower() == "live"
             ? new LiveEnvironment(clientId, secret)
             : new SandboxEnvironment(clientId, secret);
 
         _client = new PayPalHttpClient(environment);
-        _returnUrl = config["PayPal:ReturnUrl"];
-        _cancelUrl = config["PayPal:CancelUrl"];
+        _returnUrl = System.Environment.GetEnvironmentVariable("ReturnUrl");
+        _cancelUrl = System.Environment.GetEnvironmentVariable("CancelUrl");
     }
 
     public async Task<CreateOrderResult> CreateOrderAsync(decimal amount, string currency)

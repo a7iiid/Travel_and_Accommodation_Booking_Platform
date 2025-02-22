@@ -19,10 +19,11 @@ namespace Infrastructure.EmailService
         }
         public async Task SendEmail(Email email)
         {
-            var fromEmail = _configuration["Email:FromEmail"];
-            var fromPassword = _configuration["Email:FromPassword"];
-            var smtpHost = _configuration["Email:SmtpHost"];
-            var smtpPort = int.Parse(_configuration["Email:SmtpPort"]);
+
+            var fromEmail =Environment.GetEnvironmentVariable("Email") ;
+            var fromPassword = Environment.GetEnvironmentVariable("FromPassword");
+            var smtpHost = Environment.GetEnvironmentVariable("SmtpHost");
+            var smtpPort = int.Parse(Environment.GetEnvironmentVariable("SmtpPort"));
 
             var pdfInvoice = _invoice.GenerateInvoiceAsync(email);
 
