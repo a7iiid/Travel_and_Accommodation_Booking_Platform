@@ -32,7 +32,7 @@ namespace Infrastructure.EmailService
 
                 var body = $@"
             <h1>Payment Successful</h1>
-            <p>Dear {email.FirstName},</p>
+            <p>Dear {email.Name},</p>
             <p>Your payment for booking ID {email.BookingId} has been successfully processed.</p>
             <p>Amount: {email.Amount:C}</p>
             <p>Thank you for choosing our platform!</p>

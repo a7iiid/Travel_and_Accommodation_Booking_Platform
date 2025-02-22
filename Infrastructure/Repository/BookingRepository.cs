@@ -173,7 +173,7 @@ namespace Infrastructure.Repository
         {
             try
             {
-                var hotels = (from booking in _context.Bookings
+                var hotels =await (from booking in _context.Bookings
                                 join room in _context.Rooms on booking.RoomId equals room.Id
                                 join roomType in _context.RoomTypes on room.RoomTypeId equals roomType.Id
                                 join hotel in _context.Hotels on roomType.HotelId equals hotel.Id
@@ -182,9 +182,9 @@ namespace Infrastructure.Repository
                                 select hotel).Distinct()
                                 .ToListAsync();
 
-                PageData pageData = new PageData(hotels.Result.Count, pageSize, pageNumber);
+                PageData pageData = new PageData(hotels.Count, pageSize, pageNumber);
 
-                return new PaginatedList<Hotel>(hotels.Result, pageData);
+                return new PaginatedList<Hotel>(hotels, pageData);
                 
             }
             catch (Exception ex)

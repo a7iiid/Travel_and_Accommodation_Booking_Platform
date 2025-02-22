@@ -182,7 +182,7 @@ namespace Infrastructure.Repository
                     {
                         Amount = payment.Amount,
                         BookingId = payment.BookingId,
-                        FirstName = booking.User.FirstName + " " + booking.User.LastName,
+                        Name = booking.User.FirstName + " " + booking.User.LastName,
                         ToEmail = booking.User.Email
 
 
