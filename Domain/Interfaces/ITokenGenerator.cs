@@ -4,7 +4,7 @@ namespace Domain.Interfaces
 {
     public interface ITokenGenerator
     {
-        Task<string> GenerateToken(string email, string password);
+        Task<string> GenerateToken(UserResultModel user);
         Task<UserResultModel?> ValidateUserCredentials(string email, string password);
     }
 }

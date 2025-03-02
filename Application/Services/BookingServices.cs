@@ -11,19 +11,16 @@ namespace Application.Services
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IRoomRepository _roomRepository;
-        private readonly IPaymentRepository _paymentRepository;
 
         private readonly IMapper _mapper;
         public BookingServices(
             IBookingRepository bookingRepository,
             IRoomRepository roomRepository,
-            IPaymentRepository paymentRepository,
             IMapper mapper
             )
         {
             _bookingRepository = bookingRepository;
             _roomRepository = roomRepository;
-            _paymentRepository = paymentRepository;
             _mapper = mapper;
         }
 

@@ -13,13 +13,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Pay.Interfaces;
 using QuestPDF.Infrastructure;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
+
 services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DBContext")));
 DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), ".env"));
@@ -79,6 +79,7 @@ services.AddVersionedApiExplorer(options =>
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
+
 //roll 
 services.AddAuthorization(options =>
     options.AddPolicy("Admin", policy =>
@@ -87,7 +88,8 @@ services.AddAuthorization(options =>
         policy.RequireClaim("isAdmin", "True");
     }));
 
-services.AddApplicationCollection();
+services.AddApplicationAutoMapper();
+
 QuestPDF.Settings.License = LicenseType.Community;
 
 services.AddTransient<IPasswordHasher, PasswordHasher>();

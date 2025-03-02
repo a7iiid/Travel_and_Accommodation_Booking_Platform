@@ -15,20 +15,15 @@ namespace Infrastructure.Auth
     {
         private readonly IUserRepository _userRepository;
         private readonly IPasswordHasher _passwordGenerator;
-        private readonly IConfiguration _configuration;
 
-        public JwtTokenGenerator(IUserRepository authUser, IPasswordHasher passwordGenerator, IConfiguration configuration)
+        public JwtTokenGenerator(IUserRepository authUser, IPasswordHasher passwordGenerator)
         {
             _userRepository = authUser;
             _passwordGenerator = passwordGenerator;
-            _configuration = configuration;
         }
 
-        public async Task<string> GenerateToken(string email, string password)
+        public async Task<string> GenerateToken(UserResultModel user)
         {
-            var user = await ValidateUserCredentials(email, password);
-               
-
             var key = new SymmetricSecurityKey
                         (Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SecretKey")));
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

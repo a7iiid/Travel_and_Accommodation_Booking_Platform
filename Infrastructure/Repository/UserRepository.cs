@@ -27,7 +27,7 @@ namespace Infrastructure.Repository
 
 
 
-        public async Task<List<Hotel>> GetRecentlyVisitedUsersForGuestAsync(Guid guestId, int count)
+        public async Task<List<Hotel>> GetRecentlyVisitedHotelAsync(Guid guestId, int count)
         {
             return await (from booking in _context.Bookings
                           join room in _context.Rooms on booking.RoomId equals room.Id

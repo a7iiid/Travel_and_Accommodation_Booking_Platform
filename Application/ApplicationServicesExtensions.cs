@@ -7,7 +7,7 @@ namespace Application
 {
     public static class ApplicationServicesExtensions
     {
-        public static IServiceCollection AddApplicationCollection(this IServiceCollection services)
+        public static IServiceCollection AddApplicationAutoMapper(this IServiceCollection services)
         {
           
 

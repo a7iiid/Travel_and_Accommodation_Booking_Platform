@@ -8,7 +8,7 @@ namespace Domain.Interfaces
     {
         Task<bool> DeleteAsync(Guid id);
         Task<User> GetByIdAsync(Guid id);
-        Task<List<Hotel>> GetRecentlyVisitedUsersForGuestAsync(Guid guestId, int count);
+        Task<List<Hotel>> GetRecentlyVisitedHotelAsync(Guid guestId, int count);
         Task InsertAsync(User user);
         Task<bool> IsExistsAsync(Guid id);
         Task SaveChangesAsync();

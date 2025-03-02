@@ -46,8 +46,7 @@ namespace Application.Services
           
             // Generate the JWT token
             var token = await _tokenGenerator.GenerateToken(
-                user.Email,
-                authenticationRequestBody.Password);
+                user);
             return token;
 
         }

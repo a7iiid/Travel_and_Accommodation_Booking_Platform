@@ -16,7 +16,6 @@ public class BookingServicesTests
 {
     private readonly Mock<IBookingRepository> _mockBookingRepo;
     private readonly Mock<IRoomRepository> _mockRoomRepo;
-    private readonly Mock<IPaymentRepository> _mockPaymentRepo;
     private readonly Mock<IMapper> _mockMapper;
     private readonly BookingServices _bookingServices;
 
@@ -28,13 +27,11 @@ public class BookingServicesTests
 
         _mockBookingRepo = new Mock<IBookingRepository>();
         _mockRoomRepo = new Mock<IRoomRepository>();
-        _mockPaymentRepo = new Mock<IPaymentRepository>();
         _mockMapper = new Mock<IMapper>();
 
         _bookingServices = new BookingServices(
             _mockBookingRepo.Object,
             _mockRoomRepo.Object,
-            _mockPaymentRepo.Object,
             _mockMapper.Object
         );
     }
