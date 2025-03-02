@@ -29,7 +29,7 @@ Travel_and_Accommodation_Booking_Platform/
 │-- Application/       # Business logic & use cases
 │-- Domain/            # Entities & core domain models
 │-- Infrastructure/    # External services (DB, Email, Payment, etc.)
-│-- Presentation/      # API Controllers & UI Layer
+│-- Presentation/      # API Controllers
 │-- TABPTesting/       # Unit Tests
 │-- README.md          # Project Documentation
 ```
